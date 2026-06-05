@@ -14,7 +14,12 @@ import {
   taskPhotos,
   tasks,
 } from "@/db/schema";
-import { requireUserCouple } from "@/lib/couple";
+import { getUserCouple } from "@/lib/couple";
+import {
+  queryCoupleNotifications,
+  queryCoupleStats,
+  queryCoupleTasks,
+} from "@/lib/queries/tasks";
 
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -31,7 +36,8 @@ const taskSchema = z.object({
 async function getSessionCouple() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
-  const couple = await requireUserCouple(session.user.id);
+  const couple = await getUserCouple(session.user.id);
+  if (!couple) redirect("/onboarding");
   return { session, couple };
 }
 
@@ -59,27 +65,7 @@ export async function getTasks(filters?: {
   status?: string;
 }) {
   const { couple } = await getSessionCouple();
-
-  const allTasks = await db.query.tasks.findMany({
-    where: eq(tasks.coupleId, couple.id),
-    with: {
-      category: true,
-      photo: true,
-      location: true,
-      creator: true,
-    },
-    orderBy: [desc(tasks.createdAt)],
-  });
-
-  return allTasks.filter((task) => {
-    if (filters?.categorySlug && task.category.slug !== filters.categorySlug) {
-      return false;
-    }
-    if (filters?.status && task.status !== filters.status) {
-      return false;
-    }
-    return true;
-  });
+  return queryCoupleTasks(couple.id, filters);
 }
 
 export async function createTask(formData: FormData) {
@@ -335,52 +321,12 @@ export async function getMemoryPhotos() {
 
 export async function getCoupleStats() {
   const { couple } = await getSessionCouple();
-
-  const allTasks = await db.query.tasks.findMany({
-    where: eq(tasks.coupleId, couple.id),
-    with: { category: true },
-  });
-
-  const now = new Date();
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-  const doneThisMonth = allTasks.filter(
-    (t) =>
-      t.status === "done" &&
-      t.completedAt &&
-      t.completedAt >= monthStart,
-  ).length;
-
-  const byCategory = allTasks.reduce<Record<string, number>>((acc, task) => {
-    const slug = task.category.slug;
-    acc[slug] = (acc[slug] ?? 0) + 1;
-    return acc;
-  }, {});
-
-  const doneCount = allTasks.filter((t) => t.status === "done").length;
-  const total = allTasks.length;
-  const completionRate = total > 0 ? Math.round((doneCount / total) * 100) : 0;
-
-  return {
-    doneThisMonth,
-    byCategory,
-    completionRate,
-    total,
-    doneCount,
-  };
+  return queryCoupleStats(couple.id);
 }
 
 export async function getNotifications() {
   const { session, couple } = await getSessionCouple();
-
-  return db.query.notifications.findMany({
-    where: and(
-      eq(notifications.coupleId, couple.id),
-      eq(notifications.userId, session.user.id),
-    ),
-    orderBy: [desc(notifications.createdAt)],
-    limit: 20,
-  });
+  return queryCoupleNotifications(couple.id, session.user.id);
 }
 
 export async function markNotificationsRead() {
