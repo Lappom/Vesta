@@ -10,10 +10,10 @@ import { generateInviteCode, getUserCouple } from "@/lib/couple";
 
 export async function createCouple() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  if (!session?.user?.id) redirect("/login");
 
   const existing = await getUserCouple(session.user.id);
-  if (existing) redirect("/tableau-de-bord");
+  if (existing) redirect("/dashboard");
 
   let inviteCode = generateInviteCode();
   let attempts = 0;
@@ -34,25 +34,25 @@ export async function createCouple() {
 
   await db.insert(coupleMembers).values({
     coupleId: created.id,
-    userId: session.user.id,
     role: "owner",
+    userId: session.user.id,
   });
 
   revalidatePath("/");
-  redirect("/tableau-de-bord");
+  redirect("/dashboard");
 }
 
 export async function joinCouple(formData: FormData) {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  if (!session?.user?.id) redirect("/login");
 
   const existing = await getUserCouple(session.user.id);
-  if (existing) redirect("/tableau-de-bord");
+  if (existing) redirect("/dashboard");
 
   const code = String(formData.get("inviteCode") ?? "").trim();
 
   if (!/^\d{6}$/.test(code)) {
-    return { error: "Le code doit contenir 6 chiffres" };
+    return { error: "Code must contain 6 digits" };
   }
 
   const couple = await db.query.couples.findFirst({
@@ -60,7 +60,7 @@ export async function joinCouple(formData: FormData) {
   });
 
   if (!couple) {
-    return { error: "Code d'invitation invalide" };
+    return { error: "Invalid invite code" };
   }
 
   const [memberCount] = await db
@@ -69,7 +69,7 @@ export async function joinCouple(formData: FormData) {
     .where(eq(coupleMembers.coupleId, couple.id));
 
   if ((memberCount?.value ?? 0) >= 2) {
-    return { error: "Cet espace couple est déjà complet" };
+    return { error: "This couple space is already full" };
   }
 
   await db.insert(coupleMembers).values({
@@ -79,19 +79,19 @@ export async function joinCouple(formData: FormData) {
   });
 
   revalidatePath("/");
-  redirect("/tableau-de-bord");
+  redirect("/dashboard");
 }
 
 export async function regenerateInviteCode() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  if (!session?.user?.id) redirect("/login");
 
   const membership = await db.query.coupleMembers.findFirst({
     where: eq(coupleMembers.userId, session.user.id),
   });
 
   if (!membership || membership.role !== "owner") {
-    throw new Error("Seul le créateur peut régénérer le code");
+    throw new Error("Only the creator can regenerate the code");
   }
 
   const inviteCode = generateInviteCode();
@@ -100,5 +100,5 @@ export async function regenerateInviteCode() {
     .set({ inviteCode })
     .where(eq(couples.id, membership.coupleId));
 
-  revalidatePath("/parametres");
+  revalidatePath("/settings");
 }

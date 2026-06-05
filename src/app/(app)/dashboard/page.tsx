@@ -19,7 +19,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export default async function TableauDeBordPage() {
+export default async function DashboardPage() {
   const session = await auth();
   const couple = await getUserCouple(session!.user!.id);
 
@@ -40,21 +40,21 @@ export default async function TableauDeBordPage() {
       <HeroBand illustration={<DashboardHero className="w-full" />}>
         <VestaBrand size="sm" />
         <h1 className="mt-2 text-display-md text-ink">
-          Bienvenue, {session!.user!.name}
+          Welcome, {session!.user!.name}
         </h1>
         <p className="mt-3 max-w-prose text-sm text-body">
-          Votre espace à deux est prêt. {couple!.members.length}/2 membres
-          connectés.
+          Your space for two is ready. {couple!.members.length}/2 members
+          connected.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/liste" className={cn(buttonVariants())}>
-            Voir la liste
+          <Link href="/list" className={cn(buttonVariants())}>
+            View list
           </Link>
           <Link
-            href="/liste"
+            href="/list"
             className={cn(buttonVariants({ variant: "outline" }))}
           >
-            Ajouter une idée
+            Add an idea
           </Link>
         </div>
       </HeroBand>
@@ -62,15 +62,15 @@ export default async function TableauDeBordPage() {
       <div className="grid gap-4 sm:grid-cols-2">
         <StatCard
           variant="teal"
-          label="À venir"
+          label="Upcoming"
           value={upcoming.length}
-          detail="entrées planifiées"
+          detail="scheduled entries"
         />
         <StatCard
           variant="peach"
-          label="Ce mois-ci"
+          label="This month"
           value={stats.doneThisMonth}
-          detail="moments vécus"
+          detail="moments shared"
         />
       </div>
 
@@ -82,7 +82,7 @@ export default async function TableauDeBordPage() {
             </h2>
             <form action={markNotificationsRead}>
               <Button type="submit" variant="ghost" size="sm">
-                Tout marquer lu
+                Mark all read
               </Button>
             </form>
           </div>
@@ -91,7 +91,7 @@ export default async function TableauDeBordPage() {
               <li key={notification.id}>
                 <FeatureCard variant="cream" className="!p-4">
                   <div className="flex items-start gap-3">
-                    <Badge variant="pill">Nouveau</Badge>
+                    <Badge variant="pill">New</Badge>
                     <p className="text-sm">{notification.message}</p>
                   </div>
                 </FeatureCard>
@@ -103,7 +103,7 @@ export default async function TableauDeBordPage() {
 
       {upcoming.length > 0 ? (
         <section className="space-y-4">
-          <h2 className="font-display text-display-sm text-ink">À venir</h2>
+          <h2 className="font-display text-display-sm text-ink">Upcoming</h2>
           <div className="space-y-4">
             {upcoming.map((task) => (
               <TaskCard
@@ -124,12 +124,11 @@ export default async function TableauDeBordPage() {
       ) : null}
 
       <section className="space-y-4">
-        <h2 className="font-display text-display-sm text-ink">Récent</h2>
+        <h2 className="font-display text-display-sm text-ink">Recent</h2>
         {recent.length === 0 ? (
           <FeatureCard variant="cream">
             <p className="text-sm text-muted-foreground">
-              Commencez par ajouter une sortie, une date ou un moment à vivre
-              ensemble.
+              Start by adding an outing, a date, or a moment to share together.
             </p>
           </FeatureCard>
         ) : (

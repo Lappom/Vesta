@@ -18,12 +18,12 @@ import {
 async function requireCoupleMembership(userId: string) {
   const couple = await getUserCouple(userId);
   if (!couple) {
-    throw new Error("Aucun espace couple trouvé");
+    throw new Error("No couple space found");
   }
 
   const membership = couple.members.find((member) => member.userId === userId);
   if (!membership) {
-    throw new Error("Accès refusé");
+    throw new Error("Access denied");
   }
 
   return { couple, membership };
@@ -31,12 +31,12 @@ async function requireCoupleMembership(userId: string) {
 
 export async function createInvitationLink() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  if (!session?.user?.id) redirect("/login");
 
   const { couple } = await requireCoupleMembership(session.user.id);
 
   if (couple.members.length >= 2) {
-    return { error: "Votre espace couple est déjà complet" };
+    return { error: "Your couple space is already full" };
   }
 
   const token = generateInviteToken();
@@ -52,7 +52,7 @@ export async function createInvitationLink() {
     })
     .returning();
 
-  revalidatePath("/parametres");
+  revalidatePath("/settings");
 
   return {
     invitation: {
@@ -66,7 +66,7 @@ export async function createInvitationLink() {
 
 export async function revokeInvitation(invitationId: string) {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  if (!session?.user?.id) redirect("/login");
 
   const { couple, membership } = await requireCoupleMembership(session.user.id);
 
@@ -75,18 +75,18 @@ export async function revokeInvitation(invitationId: string) {
   });
 
   if (!invitation || invitation.coupleId !== couple.id) {
-    return { error: "Invitation introuvable" };
+    return { error: "Invitation not found" };
   }
 
   if (
     invitation.createdBy !== session.user.id &&
     membership.role !== "owner"
   ) {
-    return { error: "Vous ne pouvez pas révoquer ce lien" };
+    return { error: "You cannot revoke this link" };
   }
 
   if (invitation.revokedAt || invitation.usedAt) {
-    return { error: "Ce lien n'est plus actif" };
+    return { error: "This link is no longer active" };
   }
 
   await db
@@ -94,12 +94,12 @@ export async function revokeInvitation(invitationId: string) {
     .set({ revokedAt: new Date() })
     .where(eq(coupleInvitations.id, invitationId));
 
-  revalidatePath("/parametres");
+  revalidatePath("/settings");
 }
 
 export async function getCoupleInvitations() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  if (!session?.user?.id) redirect("/login");
 
   const { couple } = await requireCoupleMembership(session.user.id);
 
@@ -122,10 +122,10 @@ export async function getCoupleInvitations() {
 
 export async function acceptInvitation(token: string) {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  if (!session?.user?.id) redirect("/login");
 
   const existing = await getUserCouple(session.user.id);
-  if (existing) redirect("/tableau-de-bord");
+  if (existing) redirect("/dashboard");
 
   const invitation = await db.query.coupleInvitations.findFirst({
     where: eq(coupleInvitations.token, token),
@@ -139,11 +139,11 @@ export async function acceptInvitation(token: string) {
   });
 
   if (!invitation || !isInvitationActive(invitation)) {
-    return { error: "Lien expiré, révoqué ou déjà utilisé" };
+    return { error: "Link expired, revoked, or already used" };
   }
 
   if (invitation.couple.members.length >= 2) {
-    return { error: "Cet espace couple est déjà complet" };
+    return { error: "This couple space is already full" };
   }
 
   await db.insert(coupleMembers).values({
@@ -161,7 +161,7 @@ export async function acceptInvitation(token: string) {
     .where(eq(coupleInvitations.id, invitation.id));
 
   revalidatePath("/");
-  redirect("/tableau-de-bord");
+  redirect("/dashboard");
 }
 
 export async function getInvitationByToken(token: string) {

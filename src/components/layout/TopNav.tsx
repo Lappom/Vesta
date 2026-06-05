@@ -4,12 +4,12 @@ import { usePathname } from "next/navigation";
 import { VestaBrand } from "@/components/brand/VestaBrand";
 
 const pageTitles: Record<string, string> = {
-  "/tableau-de-bord": "Accueil",
-  "/liste": "Liste",
-  "/carte": "Carte",
-  "/souvenirs": "Souvenirs",
+  "/dashboard": "Home",
+  "/list": "List",
+  "/map": "Map",
+  "/memories": "Memories",
   "/stats": "Stats",
-  "/parametres": "Réglages",
+  "/settings": "Settings",
 };
 
 type TopNavProps = {
@@ -27,7 +27,7 @@ export function TopNav({ userName, title }: TopNavProps) {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-hairline bg-background px-4 lg:hidden">
       <VestaBrand
-        href="/tableau-de-bord"
+        href="/dashboard"
         size="md"
         wordmark={resolvedTitle}
         suppressHydrationWarning

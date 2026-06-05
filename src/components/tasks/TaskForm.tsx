@@ -16,7 +16,7 @@ const LocationPicker = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex h-[220px] items-center justify-center rounded-xl ring-1 ring-hairline">
-        <p className="text-sm text-muted-foreground">Chargement de la carte…</p>
+        <p className="text-sm text-muted-foreground">Loading map…</p>
       </div>
     ),
   },
@@ -64,8 +64,8 @@ export function TaskForm({ categories, sheetOpen = false, onSuccess }: TaskFormP
       className="space-y-4"
     >
       <div className="space-y-2">
-        <Label htmlFor="title">Titre</Label>
-        <Input id="title" name="title" required placeholder="Dîner aux chandelles…" />
+        <Label htmlFor="title">Title</Label>
+        <Input id="title" name="title" required placeholder="Candlelit dinner…" />
       </div>
 
       <div className="space-y-2">
@@ -73,15 +73,15 @@ export function TaskForm({ categories, sheetOpen = false, onSuccess }: TaskFormP
         <Textarea
           id="description"
           name="description"
-          placeholder="Détails, idées, notes…"
+          placeholder="Details, ideas, notes…"
           rows={3}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="categoryId">Catégorie</Label>
+        <Label htmlFor="categoryId">Category</Label>
         <select id="categoryId" name="categoryId" required className={selectClassName}>
-          <option value="">Choisir une catégorie</option>
+          <option value="">Choose a category</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -92,31 +92,31 @@ export function TaskForm({ categories, sheetOpen = false, onSuccess }: TaskFormP
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
-          <Label htmlFor="assignee">Pour qui</Label>
+          <Label htmlFor="assignee">For</Label>
           <select
             id="assignee"
             name="assignee"
             defaultValue="both"
             className={selectClassName}
           >
-            <option value="me">Moi</option>
-            <option value="partner">Partenaire</option>
-            <option value="both">Nous deux</option>
+            <option value="me">Me</option>
+            <option value="partner">Partner</option>
+            <option value="both">Both of us</option>
           </select>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="dueAt">Date cible</Label>
+          <Label htmlFor="dueAt">Target date</Label>
           <Input id="dueAt" name="dueAt" type="datetime-local" className="h-11" />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="locationLabel">Lieu (optionnel)</Label>
+        <Label htmlFor="locationLabel">Location (optional)</Label>
         <Input
           ref={locationLabelRef}
           id="locationLabel"
           name="locationLabel"
-          placeholder="Restaurant, parc, chez nous…"
+          placeholder="Restaurant, park, at home…"
         />
       </div>
 
@@ -133,7 +133,7 @@ export function TaskForm({ categories, sheetOpen = false, onSuccess }: TaskFormP
       ) : null}
 
       <div className="space-y-2">
-        <Label htmlFor="photo">Photo (optionnel, max 5 Mo)</Label>
+        <Label htmlFor="photo">Photo (optional, max 5 MB)</Label>
         <Input
           id="photo"
           name="photo"
@@ -147,7 +147,7 @@ export function TaskForm({ categories, sheetOpen = false, onSuccess }: TaskFormP
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       <Button type="submit" className="h-11 w-full" disabled={pending}>
-        {pending ? "Ajout…" : "Ajouter à notre liste"}
+        {pending ? "Adding…" : "Add to our list"}
       </Button>
     </form>
   );

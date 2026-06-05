@@ -21,7 +21,7 @@ export function JoinInvitationForm({
   return (
     <FeatureCard variant="peach">
       <p className="text-sm text-muted-foreground">
-        En confirmant, vous rejoindrez l&apos;espace couple de votre partenaire.
+        By confirming, you will join your partner&apos;s couple space.
       </p>
       <form
         action={() => {
@@ -42,7 +42,7 @@ export function JoinInvitationForm({
           className="w-full"
           disabled={pending}
         >
-          {pending ? "Connexion à l'espace…" : "Rejoindre l'espace"}
+          {pending ? "Joining space…" : "Join space"}
         </Button>
       </form>
     </FeatureCard>

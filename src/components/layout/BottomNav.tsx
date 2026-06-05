@@ -13,12 +13,12 @@ import {
 import { cn } from "@/lib/utils";
 
 const items = [
-  { href: "/tableau-de-bord", label: "Accueil", icon: Home },
-  { href: "/liste", label: "Liste", icon: ListTodo },
-  { href: "/carte", label: "Carte", icon: MapPin },
-  { href: "/souvenirs", label: "Souvenirs", icon: Heart },
+  { href: "/dashboard", label: "Home", icon: Home },
+  { href: "/list", label: "List", icon: ListTodo },
+  { href: "/map", label: "Map", icon: MapPin },
+  { href: "/memories", label: "Memories", icon: Heart },
   { href: "/stats", label: "Stats", icon: BarChart3 },
-  { href: "/parametres", label: "Réglages", icon: Settings },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function BottomNav() {
@@ -26,7 +26,7 @@ export function BottomNav() {
 
   return (
     <nav
-      aria-label="Navigation principale"
+      aria-label="Main navigation"
       className="fixed bottom-0 left-0 right-0 z-30 border-t border-hairline bg-background px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 lg:hidden"
     >
       <ul className="mx-auto grid max-w-lg grid-cols-6 gap-0.5">

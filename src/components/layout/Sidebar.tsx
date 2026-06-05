@@ -16,12 +16,12 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const items = [
-  { href: "/tableau-de-bord", label: "Accueil", icon: Home },
-  { href: "/liste", label: "Liste", icon: ListTodo },
-  { href: "/carte", label: "Carte", icon: MapPin },
-  { href: "/souvenirs", label: "Souvenirs", icon: Heart },
+  { href: "/dashboard", label: "Home", icon: Home },
+  { href: "/list", label: "List", icon: ListTodo },
+  { href: "/map", label: "Map", icon: MapPin },
+  { href: "/memories", label: "Memories", icon: Heart },
   { href: "/stats", label: "Stats", icon: BarChart3 },
-  { href: "/parametres", label: "Réglages", icon: Settings },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 type SidebarProps = {
@@ -35,10 +35,10 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
   return (
     <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-60 lg:shrink-0 lg:self-start lg:flex-col lg:overflow-y-auto lg:border-r lg:border-hairline lg:bg-background">
       <div className="flex h-16 items-center border-b border-hairline px-5">
-        <VestaBrand href="/tableau-de-bord" size="md" />
+        <VestaBrand href="/dashboard" size="md" />
       </div>
 
-      <nav aria-label="Navigation principale" className="flex-1 px-3 py-4">
+      <nav aria-label="Main navigation" className="flex-1 px-3 py-4">
         <ul className="space-y-1">
           {items.map((item) => {
             const active = pathname.startsWith(item.href);
@@ -77,7 +77,7 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
             className="w-full justify-start gap-2"
           >
             <LogOut className="size-4" aria-hidden />
-            Déconnexion
+            Log out
           </Button>
         </form>
       </div>

@@ -7,35 +7,35 @@ type PageProps = {
   searchParams: Promise<{ invite?: string }>;
 };
 
-export default async function ConnexionPage({ searchParams }: PageProps) {
+export default async function LoginPage({ searchParams }: PageProps) {
   const { invite } = await searchParams;
-  const inscriptionHref = invite
-    ? `/inscription?invite=${encodeURIComponent(invite)}`
-    : "/inscription";
+  const signupHref = invite
+    ? `/signup?invite=${encodeURIComponent(invite)}`
+    : "/signup";
 
   return (
     <AuthLayout illustration={<AuthConnectHero className="w-full" />}>
       <div className="mb-8 space-y-2">
         <p className="text-caption-uppercase text-muted-foreground">Vesta</p>
         <h1 className="text-display-sm text-ink">
-          {invite ? "Connexion pour rejoindre" : "Bon retour à deux"}
+          {invite ? "Sign in to join" : "Welcome back"}
         </h1>
         <p className="text-muted-foreground">
           {invite
-            ? "Connectez-vous pour accepter l'invitation à l'espace couple."
-            : "Connectez-vous pour retrouver votre espace couple."}
+            ? "Sign in to accept the couple space invitation."
+            : "Sign in to return to your couple space."}
         </p>
       </div>
 
       <LoginForm invite={invite} />
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Pas encore de compte ?{" "}
+        Don&apos;t have an account?{" "}
         <Link
-          href={inscriptionHref}
+          href={signupHref}
           className="font-semibold text-ink underline underline-offset-4"
         >
-          Créer un compte
+          Create an account
         </Link>
       </p>
     </AuthLayout>

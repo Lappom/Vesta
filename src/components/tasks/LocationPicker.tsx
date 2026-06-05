@@ -145,7 +145,7 @@ export function LocationPicker({
 
         if (!response.ok) {
           setSuggestions([]);
-          setSearchError(data.error ?? "Recherche impossible");
+          setSearchError(data.error ?? "Search failed");
           return;
         }
 
@@ -154,7 +154,7 @@ export function LocationPicker({
       } catch {
         if (!cancelled) {
           setSuggestions([]);
-          setSearchError("Recherche impossible");
+          setSearchError("Search failed");
         }
       } finally {
         if (!cancelled) setSearching(false);
@@ -198,7 +198,7 @@ export function LocationPicker({
 
   return (
     <div className="space-y-2">
-      <Label htmlFor="location-search">Position sur la carte (optionnel)</Label>
+      <Label htmlFor="location-search">Map position (optional)</Label>
 
       <div ref={searchRef} className="relative">
         <div className="relative">
@@ -222,7 +222,7 @@ export function LocationPicker({
               setSearchError(null);
             }}
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-            placeholder="Rechercher une adresse…"
+            placeholder="Search for an address…"
             className="h-11 pl-9"
             autoComplete="off"
             role="combobox"
@@ -310,7 +310,7 @@ export function LocationPicker({
         <p className="text-xs text-muted-foreground">
           {point
             ? `${point.lat.toFixed(5)}, ${point.lng.toFixed(5)}`
-            : "Cliquez sur la carte ou déplacez le point"}
+            : "Click the map or drag the pin"}
         </p>
         {point ? (
           <Button
@@ -321,7 +321,7 @@ export function LocationPicker({
             onClick={handleClear}
           >
             <X className="size-3" />
-            Effacer
+            Clear
           </Button>
         ) : null}
       </div>

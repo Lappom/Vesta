@@ -25,12 +25,12 @@ export function OnboardingForm() {
         }}
       >
         <FeatureCard variant="peach" className="cursor-pointer transition-transform hover:scale-[1.01]">
-          <FeatureCardTitle>Créer mon espace couple</FeatureCardTitle>
+          <FeatureCardTitle>Create my couple space</FeatureCardTitle>
           <FeatureCardDescription>
-            Générez un code à 6 chiffres à partager avec votre partenaire.
+            Generate a 6-digit code to share with your partner.
           </FeatureCardDescription>
           <Button type="submit" variant="on-color" className="mt-4" disabled={pending}>
-            Commencer
+            Get started
           </Button>
         </FeatureCard>
       </form>
@@ -41,7 +41,7 @@ export function OnboardingForm() {
         </div>
         <div className="relative flex justify-center">
           <span className="bg-background px-3 text-caption-uppercase text-muted-foreground">
-            ou
+            or
           </span>
         </div>
       </div>
@@ -57,13 +57,13 @@ export function OnboardingForm() {
           }}
           className="space-y-4"
         >
-          <FeatureCardTitle>Rejoindre mon partenaire</FeatureCardTitle>
+          <FeatureCardTitle>Join my partner</FeatureCardTitle>
           <FeatureCardDescription>
-            Entrez le code à 6 chiffres partagé par votre partenaire.
+            Enter the 6-digit code shared by your partner.
           </FeatureCardDescription>
           <div className="space-y-2">
             <Label htmlFor="inviteCode" className="sr-only">
-              Code d&apos;invitation
+              Invite code
             </Label>
             <Input
               id="inviteCode"
@@ -85,7 +85,7 @@ export function OnboardingForm() {
             className="w-full"
             disabled={pending}
           >
-            Rejoindre
+            Join
           </Button>
         </form>
       </FeatureCard>

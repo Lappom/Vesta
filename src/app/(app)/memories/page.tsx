@@ -10,26 +10,26 @@ import { getCategoryStyle } from "@/lib/design-tokens";
 
 export const dynamic = "force-dynamic";
 
-export default async function SouvenirsPage() {
+export default async function MemoriesPage() {
   const memories = await getMemoryPhotos();
 
   return (
     <div className="stagger-children space-y-8">
       <PageHeader
-        caption="Souvenirs"
-        title="Nos moments"
-        description="Photos des moments que vous avez cochés ensemble."
+        caption="Memories"
+        title="Our moments"
+        description="Photos from moments you've checked off together."
         illustration={<MemoriesHero className="w-full" />}
       />
 
       {memories.length === 0 ? (
         <EmptyState
           illustration={<MemoriesHero className="w-full" />}
-          title="Pas encore de souvenirs"
-          description="Terminez une entrée avec photo pour la voir apparaître ici."
+          title="No memories yet"
+          description="Complete an entry with a photo to see it here."
           action={
-            <Link href="/liste" className={cn(buttonVariants())}>
-              Voir la liste
+            <Link href="/list" className={cn(buttonVariants())}>
+              View list
             </Link>
           }
         />

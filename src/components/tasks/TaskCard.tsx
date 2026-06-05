@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { getCategoryStyle } from "@/lib/design-tokens";
@@ -19,15 +19,15 @@ type TaskCardProps = {
 };
 
 const statusLabels = {
-  todo: "À faire",
-  in_progress: "En cours",
-  done: "Fait",
+  todo: "To do",
+  in_progress: "In progress",
+  done: "Done",
 } as const;
 
 const assigneeLabels = {
-  me: "Moi",
-  partner: "Partenaire",
-  both: "Nous deux",
+  me: "Me",
+  partner: "Partner",
+  both: "Both of us",
 } as const;
 
 export function TaskCard({
@@ -76,7 +76,7 @@ export function TaskCard({
         </span>
         {dueAt ? (
           <span className="rounded-full bg-white/15 px-3 py-1.5">
-            {format(dueAt, "d MMM yyyy", { locale: fr })}
+            {format(dueAt, "MMM d, yyyy", { locale: enUS })}
           </span>
         ) : null}
         {locationLabel ? (
@@ -90,7 +90,7 @@ export function TaskCard({
         <div className="relative mt-4 aspect-video overflow-hidden rounded-lg">
           <Image
             src={photoUrl}
-            alt={`Photo pour ${title}`}
+            alt={`Photo for ${title}`}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 640px"

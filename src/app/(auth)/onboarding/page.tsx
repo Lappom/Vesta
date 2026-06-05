@@ -10,18 +10,18 @@ export const dynamic = "force-dynamic";
 
 export default async function OnboardingPage() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  if (!session?.user?.id) redirect("/login");
 
   const couple = await getUserCouple(session.user.id);
-  if (couple) redirect("/tableau-de-bord");
+  if (couple) redirect("/dashboard");
 
   return (
     <AuthLayout illustration={<OnboardingHero className="w-full" />}>
       <div className="mb-8 space-y-3">
         <VestaBrand size="sm" />
-        <h1 className="text-display-sm text-ink">Liez votre espace couple</h1>
+        <h1 className="text-display-sm text-ink">Link your couple space</h1>
         <p className="text-muted-foreground">
-          Créez un code à 6 chiffres ou rejoignez celui de votre partenaire.
+          Create a 6-digit code or join your partner&apos;s.
         </p>
       </div>
       <OnboardingForm />

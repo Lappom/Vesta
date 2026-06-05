@@ -19,29 +19,29 @@ export default async function StatsPage() {
     <div className="stagger-children space-y-8">
       <PageHeader
         caption={<VestaBrand size="sm" />}
-        title="Vos stats"
-        description="Un aperçu de vos moments partagés."
+        title="Your stats"
+        description="An overview of your shared moments."
         illustration={<StatsHero className="w-full" />}
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <StatCard
           variant="pink"
-          label="Ce mois-ci"
+          label="This month"
           value={stats.doneThisMonth}
-          detail="entrées terminées"
+          detail="entries completed"
         />
         <StatCard
           variant="teal"
-          label="Taux de complétion"
+          label="Completion rate"
           value={`${stats.completionRate}%`}
-          detail={`${stats.doneCount}/${stats.total} au total`}
+          detail={`${stats.doneCount}/${stats.total} total`}
         />
       </div>
 
       <FeatureCard variant="cream">
         <h2 className="mb-5 font-display text-display-sm text-ink">
-          Par catégorie
+          By category
         </h2>
         <div className="space-y-4">
           {Object.values(categoryStyles).map((category) => {

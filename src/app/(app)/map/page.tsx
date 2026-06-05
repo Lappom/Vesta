@@ -7,7 +7,7 @@ import { categoryStyles, getCategoryStyle } from "@/lib/design-tokens";
 
 export const dynamic = "force-dynamic";
 
-export default async function CartePage() {
+export default async function MapPage() {
   const tasks = await getTasksWithLocation();
   const withLocation = tasks.filter((task) => task.location);
 
@@ -20,12 +20,17 @@ export default async function CartePage() {
     category: task.category.name,
   }));
 
+  const placeLabel =
+    withLocation.length === 1
+      ? "1 place on the map"
+      : `${withLocation.length} places on the map`;
+
   return (
     <div className="stagger-children space-y-6">
       <PageHeader
-        caption="Carte"
-        title="Nos lieux"
-        description={`${withLocation.length} lieu${withLocation.length > 1 ? "x" : ""} sur la carte`}
+        caption="Map"
+        title="Our places"
+        description={placeLabel}
         illustration={<MapHero className="w-full" />}
       />
 

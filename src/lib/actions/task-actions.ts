@@ -17,7 +17,7 @@ import {
 import { requireUserCouple } from "@/lib/couple";
 
 const taskSchema = z.object({
-  title: z.string().min(1, "Le titre est requis"),
+  title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   categoryId: z.string().uuid(),
   status: z.enum(["todo", "in_progress", "done"]).optional(),
@@ -30,7 +30,7 @@ const taskSchema = z.object({
 
 async function getSessionCouple() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  if (!session?.user?.id) redirect("/login");
   const couple = await requireUserCouple(session.user.id);
   return { session, couple };
 }
@@ -97,7 +97,7 @@ export async function createTask(formData: FormData) {
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Données invalides" };
+    return { error: parsed.error.issues[0]?.message ?? "Invalid data" };
   }
 
   const [created] = await db
@@ -125,7 +125,7 @@ export async function createTask(formData: FormData) {
   const photo = formData.get("photo") as File | null;
   if (photo && photo.size > 0) {
     if (photo.size > 5 * 1024 * 1024) {
-      return { error: "La photo ne doit pas dépasser 5 Mo" };
+      return { error: "Photo must not exceed 5 MB" };
     }
     const blob = await put(`tasks/${created.id}/${photo.name}`, photo, {
       access: "public",
@@ -139,13 +139,13 @@ export async function createTask(formData: FormData) {
   await notifyPartner(
     couple.id,
     session.user.id,
-    `${session.user.name} a ajouté « ${parsed.data.title} »`,
+    `${session.user.name} added "${parsed.data.title}"`,
   );
 
-  revalidatePath("/liste");
-  revalidatePath("/tableau-de-bord");
-  revalidatePath("/carte");
-  revalidatePath("/souvenirs");
+  revalidatePath("/list");
+  revalidatePath("/dashboard");
+  revalidatePath("/map");
+  revalidatePath("/memories");
   revalidatePath("/stats");
   return { success: true };
 }
@@ -157,7 +157,7 @@ export async function updateTaskStatus(taskId: string, status: "todo" | "in_prog
     where: and(eq(tasks.id, taskId), eq(tasks.coupleId, couple.id)),
   });
 
-  if (!task) throw new Error("Tâche introuvable");
+  if (!task) throw new Error("Task not found");
 
   await db
     .update(tasks)
@@ -172,13 +172,13 @@ export async function updateTaskStatus(taskId: string, status: "todo" | "in_prog
     await notifyPartner(
       couple.id,
       session.user.id,
-      `${session.user.name} a terminé « ${task.title} »`,
+      `${session.user.name} completed "${task.title}"`,
     );
   }
 
-  revalidatePath("/liste");
-  revalidatePath("/tableau-de-bord");
-  revalidatePath("/souvenirs");
+  revalidatePath("/list");
+  revalidatePath("/dashboard");
+  revalidatePath("/memories");
   revalidatePath("/stats");
 }
 
@@ -189,8 +189,8 @@ export async function deleteTask(taskId: string) {
     .delete(tasks)
     .where(and(eq(tasks.id, taskId), eq(tasks.coupleId, couple.id)));
 
-  revalidatePath("/liste");
-  revalidatePath("/tableau-de-bord");
+  revalidatePath("/list");
+  revalidatePath("/dashboard");
 }
 
 export async function getCategories() {
@@ -287,5 +287,5 @@ export async function markNotificationsRead() {
       ),
     );
 
-  revalidatePath("/tableau-de-bord");
+  revalidatePath("/dashboard");
 }

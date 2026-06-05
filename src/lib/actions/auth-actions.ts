@@ -10,11 +10,11 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 
 const registerSchema = z.object({
-  name: z.string().min(2, "Le prénom doit contenir au moins 2 caractères"),
-  email: z.email("Email invalide"),
+  name: z.string().min(2, "First name must be at least 2 characters"),
+  email: z.email("Invalid email"),
   password: z
     .string()
-    .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+    .min(8, "Password must be at least 8 characters"),
 });
 
 export async function registerUser(formData: FormData) {
@@ -25,7 +25,7 @@ export async function registerUser(formData: FormData) {
   });
 
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Données invalides" };
+    return { error: parsed.error.issues[0]?.message ?? "Invalid data" };
   }
 
   const email = parsed.data.email.toLowerCase();
@@ -34,7 +34,7 @@ export async function registerUser(formData: FormData) {
   });
 
   if (existing) {
-    return { error: "Un compte existe déjà avec cet email" };
+    return { error: "An account already exists with this email" };
   }
 
   const passwordHash = await hash(parsed.data.password, 12);
@@ -53,7 +53,7 @@ export async function registerUser(formData: FormData) {
 
   const invite = String(formData.get("invite") ?? "").trim();
   if (invite) {
-    redirect(`/rejoindre/${encodeURIComponent(invite)}`);
+    redirect(`/join/${encodeURIComponent(invite)}`);
   }
 
   redirect("/onboarding");
@@ -64,8 +64,8 @@ export async function loginUser(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   const invite = String(formData.get("invite") ?? "").trim();
   const redirectTo = invite
-    ? `/rejoindre/${encodeURIComponent(invite)}`
-    : "/tableau-de-bord";
+    ? `/join/${encodeURIComponent(invite)}`
+    : "/dashboard";
 
   try {
     await signIn("credentials", {
@@ -75,12 +75,12 @@ export async function loginUser(formData: FormData) {
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      return { error: "Email ou mot de passe incorrect" };
+      return { error: "Incorrect email or password" };
     }
     throw error;
   }
 }
 
 export async function logoutUser() {
-  await signOut({ redirectTo: "/connexion" });
+  await signOut({ redirectTo: "/login" });
 }

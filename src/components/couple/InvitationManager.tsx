@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,10 +27,10 @@ type InvitationManagerProps = {
 };
 
 const statusLabels: Record<InvitationItem["status"], string> = {
-  active: "Actif",
-  revoked: "Révoqué",
-  used: "Utilisé",
-  expired: "Expiré",
+  active: "Active",
+  revoked: "Revoked",
+  used: "Used",
+  expired: "Expired",
 };
 
 export function InvitationManager({
@@ -51,17 +51,17 @@ export function InvitationManager({
   async function handleCopy(url: string) {
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Lien copié dans le presse-papiers");
+      toast.success("Link copied to clipboard");
     } catch {
-      toast.error("Impossible de copier le lien");
+      toast.error("Unable to copy link");
     }
   }
 
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Créez un lien sécurisé valable 7 jours. La régénération du code à 6
-        chiffres n&apos;affecte pas ces liens.
+        Create a secure link valid for 7 days. Regenerating the 6-digit code
+        does not affect these links.
       </p>
 
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
@@ -92,17 +92,17 @@ export function InvitationManager({
                 },
                 ...current,
               ]);
-              toast.success("Lien d'invitation créé");
+              toast.success("Invitation link created");
             }
           });
         }}
       >
-        {pending ? "Création…" : "Créer un lien d'invitation"}
+        {pending ? "Creating…" : "Create invitation link"}
       </Button>
 
       {isCoupleFull ? (
         <p className="text-sm text-muted-foreground">
-          Votre espace est complet. Aucun nouveau lien ne peut être créé.
+          Your space is full. No new links can be created.
         </p>
       ) : null}
 
@@ -115,9 +115,9 @@ export function InvitationManager({
             >
               <p className="truncate text-sm font-medium">{invitation.url}</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Expire le{" "}
-                {format(new Date(invitation.expiresAt), "d MMMM yyyy", {
-                  locale: fr,
+                Expires{" "}
+                {format(new Date(invitation.expiresAt), "MMMM d, yyyy", {
+                  locale: enUS,
                 })}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -128,7 +128,7 @@ export function InvitationManager({
                   disabled={pending}
                   onClick={() => handleCopy(invitation.url)}
                 >
-                  Copier le lien
+                  Copy link
                 </Button>
                 <Button
                   type="button"
@@ -155,11 +155,11 @@ export function InvitationManager({
                             : item,
                         ),
                       );
-                      toast.success("Lien révoqué");
+                      toast.success("Link revoked");
                     });
                   }}
                 >
-                  Révoquer
+                  Revoke
                 </Button>
               </div>
             </li>
@@ -167,14 +167,14 @@ export function InvitationManager({
         </ul>
       ) : (
         <p className="text-sm text-muted-foreground">
-          Aucun lien actif pour le moment.
+          No active links at the moment.
         </p>
       )}
 
       {pastInvitations.length > 0 ? (
         <div className="space-y-2 border-t border-hairline pt-4">
           <p className="text-caption-uppercase text-muted-foreground">
-            Liens passés
+            Past links
           </p>
           <ul className="space-y-2">
             {pastInvitations.map((invitation) => (
@@ -183,8 +183,8 @@ export function InvitationManager({
                 className="flex items-center justify-between gap-3 text-sm text-muted-foreground"
               >
                 <span className="truncate">
-                  {format(new Date(invitation.createdAt), "d MMM yyyy", {
-                    locale: fr,
+                  {format(new Date(invitation.createdAt), "MMM d, yyyy", {
+                    locale: enUS,
                   })}
                 </span>
                 <span>{statusLabels[invitation.status]}</span>

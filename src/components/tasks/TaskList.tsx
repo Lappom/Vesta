@@ -41,18 +41,18 @@ type TaskListProps = {
 };
 
 const filters = [
-  { id: "all", label: "Tout" },
-  { id: "sortie", label: "Sorties" },
+  { id: "all", label: "All" },
+  { id: "sortie", label: "Outings" },
   { id: "date", label: "Dates" },
-  { id: "pratique", label: "Pratique" },
-  { id: "intimite", label: "Intimité" },
+  { id: "pratique", label: "Practical" },
+  { id: "intimite", label: "Intimacy" },
 ];
 
 const statusFilters = [
-  { id: "all", label: "Tous statuts" },
-  { id: "todo", label: "À faire" },
-  { id: "in_progress", label: "En cours" },
-  { id: "done", label: "Fait" },
+  { id: "all", label: "All statuses" },
+  { id: "todo", label: "To do" },
+  { id: "in_progress", label: "In progress" },
+  { id: "done", label: "Done" },
 ];
 
 export function TaskList({ tasks, categories }: TaskListProps) {
@@ -77,17 +77,17 @@ export function TaskList({ tasks, categories }: TaskListProps) {
     <div className="stagger-children space-y-6">
       <div className="flex items-start justify-between gap-4">
         <PageHeader
-          caption="Liste"
-          title="Notre liste"
-          description="Sorties, dates et moments à vivre ensemble."
+          caption="List"
+          title="Our list"
+          description="Outings, dates, and moments to share together."
           illustration={<ListHero className="w-full" />}
         />
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
             render={<Button className="shrink-0" />}
           >
-            <span className="lg:hidden">Ajouter</span>
-            <span className="hidden lg:inline">Ajouter une entrée</span>
+            <span className="lg:hidden">Add</span>
+            <span className="hidden lg:inline">Add an entry</span>
           </SheetTrigger>
           <SheetContent
             side="bottom"
@@ -95,7 +95,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
           >
             <SheetHeader>
               <SheetTitle className="font-display text-display-sm">
-                Nouvelle entrée
+                New entry
               </SheetTitle>
             </SheetHeader>
             <div className="px-4 pb-6">
@@ -113,24 +113,24 @@ export function TaskList({ tasks, categories }: TaskListProps) {
         items={filters}
         value={categoryFilter}
         onChange={setCategoryFilter}
-        aria-label="Filtrer par catégorie"
+        aria-label="Filter by category"
       />
 
       <CategoryTabs
         items={statusFilters}
         value={statusFilter}
         onChange={setStatusFilter}
-        aria-label="Filtrer par statut"
+        aria-label="Filter by status"
       />
 
       <div className="space-y-4">
         {filtered.length === 0 ? (
           <EmptyState
             illustration={<ListHero className="w-full" />}
-            title="Liste vide"
-            description="Ajoutez votre première idée à deux."
+            title="Empty list"
+            description="Add your first idea for two."
             action={
-              <Button onClick={() => setOpen(true)}>Ajouter une entrée</Button>
+              <Button onClick={() => setOpen(true)}>Add an entry</Button>
             }
           />
         ) : (
@@ -158,7 +158,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                       startAction(() => updateTaskStatus(task.id, "done"))
                     }
                   >
-                    Marquer fait
+                    Mark done
                   </Button>
                 ) : null}
                 {task.status === "todo" ? (
@@ -173,7 +173,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                       )
                     }
                   >
-                    En cours
+                    In progress
                   </Button>
                 ) : null}
                 <Button
@@ -183,7 +183,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                   disabled={actionPending}
                   onClick={() => startAction(() => deleteTask(task.id))}
                 >
-                  Supprimer
+                  Delete
                 </Button>
               </div>
             </div>

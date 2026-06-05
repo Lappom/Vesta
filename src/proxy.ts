@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
-const publicRoutes = ["/connexion", "/inscription"];
+const publicRoutes = ["/login", "/signup"];
 const onboardingRoute = "/onboarding";
 
 export default auth((req) => {
@@ -17,23 +17,23 @@ export default auth((req) => {
     pathname !== "/" &&
     !pathname.startsWith(onboardingRoute)
   ) {
-    return NextResponse.redirect(new URL("/connexion", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   if (
     isLoggedIn &&
-    (pathname === "/connexion" || pathname === "/inscription")
+    (pathname === "/login" || pathname === "/signup")
   ) {
-    return NextResponse.redirect(new URL("/tableau-de-bord", req.url));
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   if (!isLoggedIn && pathname.startsWith(onboardingRoute)) {
-    return NextResponse.redirect(new URL("/connexion", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   if (pathname === "/") {
     return NextResponse.redirect(
-      new URL(isLoggedIn ? "/tableau-de-bord" : "/connexion", req.url),
+      new URL(isLoggedIn ? "/dashboard" : "/login", req.url),
     );
   }
 

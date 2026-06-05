@@ -19,14 +19,14 @@ type PageProps = {
   params: Promise<{ token: string }>;
 };
 
-export default async function RejoindrePage({ params }: PageProps) {
+export default async function JoinPage({ params }: PageProps) {
   const { token } = await params;
   const invitation = await getInvitationByToken(token);
 
   if (!invitation) {
     return (
       <AuthLayout illustration={<AuthWelcomeHero className="w-full" />}>
-        <InvalidInvitation message="Ce lien d'invitation est invalide." />
+        <InvalidInvitation message="This invitation link is invalid." />
       </AuthLayout>
     );
   }
@@ -34,10 +34,10 @@ export default async function RejoindrePage({ params }: PageProps) {
   if (!invitation.isActive) {
     const message =
       invitation.status === "used"
-        ? "Ce lien a déjà été utilisé."
+        ? "This link has already been used."
         : invitation.status === "revoked"
-          ? "Ce lien a été révoqué."
-          : "Ce lien d'invitation a expiré.";
+          ? "This link has been revoked."
+          : "This invitation link has expired.";
 
     return (
       <AuthLayout illustration={<AuthWelcomeHero className="w-full" />}>
@@ -49,7 +49,7 @@ export default async function RejoindrePage({ params }: PageProps) {
   const session = await auth();
 
   if (!session?.user?.id) {
-    redirect(`/inscription?invite=${encodeURIComponent(token)}`);
+    redirect(`/signup?invite=${encodeURIComponent(token)}`);
   }
 
   const existingCouple = await getUserCouple(session.user.id);
@@ -58,12 +58,12 @@ export default async function RejoindrePage({ params }: PageProps) {
     return (
       <AuthLayout illustration={<AuthWelcomeHero className="w-full" />}>
         <FeatureCard variant="lavender">
-          <h1 className="text-display-sm text-ink">Vous avez déjà un espace</h1>
+          <h1 className="text-display-sm text-ink">You already have a space</h1>
           <p className="mt-3 text-muted-foreground">
-            Votre compte est déjà rattaché à un espace couple.
+            Your account is already linked to a couple space.
           </p>
-          <Link href="/tableau-de-bord" className={cn(buttonVariants(), "mt-6")}>
-            Retour au tableau de bord
+          <Link href="/dashboard" className={cn(buttonVariants(), "mt-6")}>
+            Back to dashboard
           </Link>
         </FeatureCard>
       </AuthLayout>
@@ -73,7 +73,7 @@ export default async function RejoindrePage({ params }: PageProps) {
   if (invitation.memberCount >= 2) {
     return (
       <AuthLayout illustration={<AuthWelcomeHero className="w-full" />}>
-        <InvalidInvitation message="Cet espace couple est déjà complet." />
+        <InvalidInvitation message="This couple space is already full." />
       </AuthLayout>
     );
   }
@@ -82,9 +82,9 @@ export default async function RejoindrePage({ params }: PageProps) {
     <AuthLayout illustration={<AuthWelcomeHero className="w-full" />}>
       <div className="mb-8 space-y-3">
         <p className="text-caption-uppercase text-muted-foreground">Vesta</p>
-        <h1 className="text-display-sm text-ink">Rejoindre un espace couple</h1>
+        <h1 className="text-display-sm text-ink">Join a couple space</h1>
         <p className="text-muted-foreground">
-          Vous avez été invité·e à rejoindre un espace à deux sur Vesta.
+          You&apos;ve been invited to join a couple space on Vesta.
         </p>
       </div>
       <JoinInvitationForm
@@ -98,13 +98,13 @@ export default async function RejoindrePage({ params }: PageProps) {
 function InvalidInvitation({ message }: { message: string }) {
   return (
     <FeatureCard variant="lavender">
-      <h1 className="text-display-sm text-ink">Lien indisponible</h1>
+      <h1 className="text-display-sm text-ink">Link unavailable</h1>
       <p className="mt-3 text-muted-foreground">{message}</p>
       <Link
-        href="/connexion"
+        href="/login"
         className={cn(buttonVariants({ variant: "outline" }), "mt-6")}
       >
-        Se connecter
+        Sign in
       </Link>
     </FeatureCard>
   );

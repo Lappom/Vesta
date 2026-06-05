@@ -10,7 +10,7 @@ import { getCoupleInvitations } from "@/lib/actions/invitation-actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function ParametresPage() {
+export default async function SettingsPage() {
   const session = await auth();
   const couple = await getUserCouple(session!.user!.id);
   const invitations = await getCoupleInvitations();
@@ -22,13 +22,13 @@ export default async function ParametresPage() {
   return (
     <div className="stagger-children space-y-6">
       <PageHeader
-        caption="Réglages"
-        title="Paramètres"
-        description="Gérez votre compte et votre espace couple."
+        caption="Settings"
+        title="Settings"
+        description="Manage your account and couple space."
       />
 
       <FeatureCard variant="cream">
-        <h2 className="text-lg font-semibold">Compte</h2>
+        <h2 className="text-lg font-semibold">Account</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {session!.user!.email}
         </p>
@@ -36,24 +36,24 @@ export default async function ParametresPage() {
       </FeatureCard>
 
       <FeatureCard variant="cream" className="bg-surface-soft">
-        <h2 className="text-lg font-semibold">Code d&apos;invitation</h2>
+        <h2 className="text-lg font-semibold">Invite code</h2>
         <p className="mt-3 font-display text-display-lg tracking-[0.2em]">
           {couple!.inviteCode}
         </p>
         <p className="mt-2 text-sm text-muted-foreground">
-          Partagez ce code à 6 chiffres avec votre partenaire.
+          Share this 6-digit code with your partner.
         </p>
         {isOwner ? (
           <form action={regenerateInviteCode} className="mt-4">
             <Button type="submit" variant="outline">
-              Régénérer le code
+              Regenerate code
             </Button>
           </form>
         ) : null}
       </FeatureCard>
 
       <FeatureCard variant="cream">
-        <h2 className="text-lg font-semibold">Liens d&apos;invitation</h2>
+        <h2 className="text-lg font-semibold">Invitation links</h2>
         <div className="mt-4">
           <InvitationManager
             invitations={invitations}
@@ -63,18 +63,18 @@ export default async function ParametresPage() {
       </FeatureCard>
 
       <FeatureCard variant="cream">
-        <h2 className="text-lg font-semibold">Espace couple</h2>
+        <h2 className="text-lg font-semibold">Couple space</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          {couple!.members.length}/2 membres ·{" "}
+          {couple!.members.length}/2 members ·{" "}
           {couple!.members.length < 2
-            ? "En attente de votre partenaire"
-            : "Couple complet"}
+            ? "Waiting for your partner"
+            : "Couple complete"}
         </p>
       </FeatureCard>
 
       <form action={logoutUser}>
         <Button type="submit" variant="destructive" className="w-full">
-          Se déconnecter
+          Log out
         </Button>
       </form>
     </div>

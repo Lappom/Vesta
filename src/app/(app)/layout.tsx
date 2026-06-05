@@ -9,7 +9,7 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  if (!session?.user?.id) redirect("/login");
 
   const couple = await getUserCouple(session.user.id);
   if (!couple) redirect("/onboarding");
