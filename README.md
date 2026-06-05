@@ -54,7 +54,11 @@ vercel deploy
 
 ### Photos (Vercel Blob)
 
-Créer un Blob store depuis le [dashboard Vercel](https://vercel.com/dashboard) → Storage → Blob, puis ajouter `BLOB_READ_WRITE_TOKEN` aux variables d'environnement.
+Store `vesta-photos` (privé, iad1) connecté au projet. `BLOB_READ_WRITE_TOKEN` est provisionné sur development, preview et production.
+
+```bash
+vercel blob create-store vesta-photos --access private --yes --environment production --environment preview --environment development
+```
 
 ## GitHub
 
