@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import { ListHero } from "@/components/illustrations/ListHero";
 import { TaskCard } from "@/components/tasks/TaskCard";
+import { TaskListMobileItem } from "@/components/tasks/TaskListMobileItem";
 import { Button } from "@/components/ui/button";
 import { CategoryTabs } from "@/components/ui/category-tabs";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -124,74 +125,120 @@ export function TaskList({ tasks, categories }: TaskListProps) {
         aria-label="Filter by status"
       />
 
-      <div className="space-y-4">
-        {filtered.length === 0 ? (
-          <EmptyState
-            illustration={<ListHero className="w-full" />}
-            title="Empty list"
-            description="Add your first idea for two."
-            action={
-              <Button onClick={() => setAddOpen(true)}>Add an entry</Button>
-            }
-          />
-        ) : (
-          filtered.map((task) => (
-            <div key={task.id} className="space-y-2">
-              <TaskCard
-                title={task.title}
-                description={task.description}
-                categorySlug={task.category.slug}
-                categoryName={task.category.name}
-                status={task.status}
-                assignee={task.assignee}
-                dueAt={task.dueAt}
-                photoUrl={task.photo?.blobUrl}
-                locationLabel={task.location?.label}
-                onClick={() => setEditingTask(task)}
-              />
-              <div className="flex flex-wrap gap-2 px-1">
-                {task.status !== "done" ? (
-                  <Button
-                    type="button"
-                    variant="on-color"
-                    size="sm"
-                    disabled={actionPending}
-                    onClick={() =>
+      {filtered.length === 0 ? (
+        <EmptyState
+          illustration={<ListHero className="w-full" />}
+          title="Empty list"
+          description="Add your first idea for two."
+          action={
+            <Button onClick={() => setAddOpen(true)}>Add an entry</Button>
+          }
+        />
+      ) : (
+        <>
+          <div className="min-w-0 lg:hidden">
+            <div
+              role="table"
+              aria-label="List entries"
+              className="w-full min-w-0 overflow-hidden rounded-xl border border-hairline/80"
+            >
+              <div role="rowgroup">
+                <div
+                  role="row"
+                  className="grid grid-cols-[minmax(0,1fr)_5.75rem_3.75rem] gap-x-2 border-b border-hairline/80 bg-surface-card/70 px-3 py-2 text-[11px] font-medium uppercase tracking-wide text-muted-foreground"
+                >
+                  <div role="columnheader" className="min-w-0 truncate">
+                    Entry
+                  </div>
+                  <div role="columnheader" className="min-w-0 truncate text-right">
+                    Status
+                  </div>
+                  <div role="columnheader" className="min-w-0 truncate text-right">
+                    Date
+                  </div>
+                </div>
+              </div>
+              <div role="rowgroup" className="divide-y divide-hairline/30">
+                {filtered.map((task) => (
+                  <TaskListMobileItem
+                    key={task.id}
+                    task={task}
+                    actionPending={actionPending}
+                    onEdit={() => setEditingTask(task)}
+                    onMarkDone={() =>
                       startAction(() => updateTaskStatus(task.id, "done"))
                     }
-                  >
-                    Mark done
-                  </Button>
-                ) : null}
-                {task.status === "todo" ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={actionPending}
-                    onClick={() =>
+                    onMarkInProgress={() =>
                       startAction(() =>
                         updateTaskStatus(task.id, "in_progress"),
                       )
                     }
-                  >
-                    In progress
-                  </Button>
-                ) : null}
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  disabled={actionPending}
-                  onClick={() => startAction(() => deleteTask(task.id))}
-                >
-                  Delete
-                </Button>
+                    onDelete={() => startAction(() => deleteTask(task.id))}
+                  />
+                ))}
               </div>
             </div>
-          ))
-        )}
-      </div>
+          </div>
+
+          <div className="hidden space-y-4 lg:block">
+            {filtered.map((task) => (
+              <div key={task.id} className="space-y-2">
+                <TaskCard
+                  title={task.title}
+                  description={task.description}
+                  categorySlug={task.category.slug}
+                  categoryName={task.category.name}
+                  status={task.status}
+                  assignee={task.assignee}
+                  dueAt={task.dueAt}
+                  photoUrl={task.photo?.blobUrl}
+                  locationLabel={task.location?.label}
+                  onClick={() => setEditingTask(task)}
+                />
+                <div className="flex flex-wrap gap-2 px-1">
+                  {task.status !== "done" ? (
+                    <Button
+                      type="button"
+                      variant="on-color"
+                      size="sm"
+                      disabled={actionPending}
+                      onClick={() =>
+                        startAction(() => updateTaskStatus(task.id, "done"))
+                      }
+                    >
+                      Mark done
+                    </Button>
+                  ) : null}
+                  {task.status === "todo" ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={actionPending}
+                      onClick={() =>
+                        startAction(() =>
+                          updateTaskStatus(task.id, "in_progress"),
+                        )
+                      }
+                    >
+                      In progress
+                    </Button>
+                  ) : null}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={actionPending}
+                    onClick={() => startAction(() => deleteTask(task.id))}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       <Sheet
         open={editingTask !== null}
