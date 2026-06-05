@@ -24,9 +24,9 @@ type Task = {
   status: "todo" | "in_progress" | "done";
   assignee: "me" | "partner" | "both";
   dueAt: Date | null;
-  category: { name: string; slug: string };
+  category: { id: string; name: string; slug: string };
   photo: { blobUrl: string } | null;
-  location: { label: string | null } | null;
+  location: { lat: number; lng: number; label: string | null } | null;
 };
 
 type Category = {
@@ -58,7 +58,8 @@ const statusFilters = [
 export function TaskList({ tasks, categories }: TaskListProps) {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [open, setOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [actionPending, startAction] = useTransition();
 
   const filtered = useMemo(() => {
@@ -82,7 +83,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
           description="Outings, dates, and moments to share together."
           illustration={<ListHero className="w-full" />}
         />
-        <Sheet open={open} onOpenChange={setOpen}>
+        <Sheet open={addOpen} onOpenChange={setAddOpen}>
           <SheetTrigger
             render={<Button className="shrink-0" />}
           >
@@ -101,8 +102,8 @@ export function TaskList({ tasks, categories }: TaskListProps) {
             <div className="px-4 pb-6">
               <TaskForm
                 categories={categories}
-                sheetOpen={open}
-                onSuccess={() => setOpen(false)}
+                sheetOpen={addOpen}
+                onSuccess={() => setAddOpen(false)}
               />
             </div>
           </SheetContent>
@@ -130,7 +131,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
             title="Empty list"
             description="Add your first idea for two."
             action={
-              <Button onClick={() => setOpen(true)}>Add an entry</Button>
+              <Button onClick={() => setAddOpen(true)}>Add an entry</Button>
             }
           />
         ) : (
@@ -146,6 +147,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                 dueAt={task.dueAt}
                 photoUrl={task.photo?.blobUrl}
                 locationLabel={task.location?.label}
+                onClick={() => setEditingTask(task)}
               />
               <div className="flex flex-wrap gap-2 px-1">
                 {task.status !== "done" ? (
@@ -190,6 +192,42 @@ export function TaskList({ tasks, categories }: TaskListProps) {
           ))
         )}
       </div>
+
+      <Sheet
+        open={editingTask !== null}
+        onOpenChange={(open) => !open && setEditingTask(null)}
+      >
+        <SheetContent
+          side="bottom"
+          className="max-h-[90dvh] overflow-y-auto sm:max-w-lg sm:mx-auto"
+        >
+          <SheetHeader>
+            <SheetTitle className="font-display text-display-sm">
+              Edit entry
+            </SheetTitle>
+          </SheetHeader>
+          <div className="px-4 pb-6">
+            {editingTask ? (
+              <TaskForm
+                key={editingTask.id}
+                categories={categories}
+                sheetOpen={editingTask !== null}
+                task={{
+                  id: editingTask.id,
+                  title: editingTask.title,
+                  description: editingTask.description,
+                  categoryId: editingTask.category.id,
+                  assignee: editingTask.assignee,
+                  dueAt: editingTask.dueAt,
+                  location: editingTask.location,
+                  photoUrl: editingTask.photo?.blobUrl,
+                }}
+                onSuccess={() => setEditingTask(null)}
+              />
+            ) : null}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

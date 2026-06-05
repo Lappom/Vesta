@@ -30,6 +30,7 @@ type GeocodeResult = {
 type LocationPickerProps = {
   active?: boolean;
   onLabelSuggest?: (label: string) => void;
+  initialPoint?: Coords | null;
 };
 
 const DEFAULT_CENTER: [number, number] = [2.3522, 48.8566];
@@ -99,10 +100,11 @@ function MapFlyTo({ target }: { target: Coords | null }) {
 export function LocationPicker({
   active = true,
   onLabelSuggest,
+  initialPoint = null,
 }: LocationPickerProps) {
   const listboxId = useId();
   const searchRef = useRef<HTMLDivElement>(null);
-  const [point, setPoint] = useState<Coords | null>(null);
+  const [point, setPoint] = useState<Coords | null>(initialPoint);
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<GeocodeResult[]>([]);
   const [searching, setSearching] = useState(false);
