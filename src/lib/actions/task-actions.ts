@@ -150,6 +150,115 @@ export async function createTask(formData: FormData) {
   return { success: true };
 }
 
+export async function updateTask(formData: FormData) {
+  const { session, couple } = await getSessionCouple();
+
+  const taskId = formData.get("taskId");
+  if (typeof taskId !== "string" || !taskId) {
+    return { error: "Task ID is required" };
+  }
+
+  const parsed = taskSchema.safeParse({
+    title: formData.get("title"),
+    description: formData.get("description") || undefined,
+    categoryId: formData.get("categoryId"),
+    assignee: formData.get("assignee") || "both",
+    dueAt: formData.get("dueAt") || undefined,
+    lat: formData.get("lat") || undefined,
+    lng: formData.get("lng") || undefined,
+    locationLabel: formData.get("locationLabel") || undefined,
+  });
+
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid data" };
+  }
+
+  const task = await db.query.tasks.findFirst({
+    where: and(eq(tasks.id, taskId), eq(tasks.coupleId, couple.id)),
+  });
+
+  if (!task) {
+    return { error: "Task not found" };
+  }
+
+  await db
+    .update(tasks)
+    .set({
+      title: parsed.data.title,
+      description: parsed.data.description,
+      categoryId: parsed.data.categoryId,
+      assignee: parsed.data.assignee ?? "both",
+      dueAt: parsed.data.dueAt ? new Date(parsed.data.dueAt) : null,
+      updatedAt: new Date(),
+    })
+    .where(eq(tasks.id, taskId));
+
+  const existingLocation = await db.query.taskLocations.findFirst({
+    where: eq(taskLocations.taskId, taskId),
+  });
+
+  if (parsed.data.lat && parsed.data.lng) {
+    const locationValues = {
+      lat: parseFloat(parsed.data.lat),
+      lng: parseFloat(parsed.data.lng),
+      label: parsed.data.locationLabel,
+    };
+
+    if (existingLocation) {
+      await db
+        .update(taskLocations)
+        .set(locationValues)
+        .where(eq(taskLocations.taskId, taskId));
+    } else {
+      await db.insert(taskLocations).values({
+        taskId,
+        ...locationValues,
+      });
+    }
+  } else if (existingLocation) {
+    await db.delete(taskLocations).where(eq(taskLocations.taskId, taskId));
+  }
+
+  const photo = formData.get("photo") as File | null;
+  if (photo && photo.size > 0) {
+    if (photo.size > 5 * 1024 * 1024) {
+      return { error: "Photo must not exceed 5 MB" };
+    }
+    const blob = await put(`tasks/${taskId}/${photo.name}`, photo, {
+      access: "public",
+    });
+
+    const existingPhoto = await db.query.taskPhotos.findFirst({
+      where: eq(taskPhotos.taskId, taskId),
+    });
+
+    if (existingPhoto) {
+      await db
+        .update(taskPhotos)
+        .set({ blobUrl: blob.url })
+        .where(eq(taskPhotos.taskId, taskId));
+    } else {
+      await db.insert(taskPhotos).values({
+        taskId,
+        blobUrl: blob.url,
+      });
+    }
+  }
+
+  await notifyPartner(
+    couple.id,
+    session.user.id,
+    `${session.user.name} updated "${parsed.data.title}"`,
+  );
+
+  revalidatePath("/list");
+  revalidatePath("/dashboard");
+  revalidatePath("/map");
+  revalidatePath("/memories");
+  revalidatePath("/stats");
+  return { success: true };
+}
+
 export async function updateTaskStatus(taskId: string, status: "todo" | "in_progress" | "done") {
   const { session, couple } = await getSessionCouple();
 
