@@ -18,6 +18,7 @@ export const metadata: Metadata = {
   title: "Vesta — Notre liste à deux",
   description:
     "Espace privé pour planifier sorties, dates et moments de couple.",
+  applicationName: "Vesta",
 };
 
 export default function RootLayout({

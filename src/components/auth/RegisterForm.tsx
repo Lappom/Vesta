@@ -6,7 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerUser } from "@/lib/actions/auth-actions";
 
-export function RegisterForm() {
+type RegisterFormProps = {
+  invite?: string;
+};
+
+export function RegisterForm({ invite }: RegisterFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -21,6 +25,7 @@ export function RegisterForm() {
       }}
       className="space-y-4 rounded-xl bg-surface-soft p-6"
     >
+      {invite ? <input type="hidden" name="invite" value={invite} /> : null}
       <div className="space-y-2">
         <Label htmlFor="name">Prénom</Label>
         <Input id="name" name="name" required autoComplete="name" />

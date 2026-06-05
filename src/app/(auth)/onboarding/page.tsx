@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { VestaBrand } from "@/components/brand/VestaBrand";
 import { OnboardingHero } from "@/components/illustrations/OnboardingHero";
 import { OnboardingForm } from "@/components/couple/OnboardingForm";
 import { AuthLayout } from "@/components/layout/AuthLayout";
@@ -17,7 +18,7 @@ export default async function OnboardingPage() {
   return (
     <AuthLayout illustration={<OnboardingHero className="w-full" />}>
       <div className="mb-8 space-y-3">
-        <p className="text-caption-uppercase text-muted-foreground">Vesta</p>
+        <VestaBrand size="sm" />
         <h1 className="text-display-sm text-ink">Liez votre espace couple</h1>
         <p className="text-muted-foreground">
           Créez un code à 6 chiffres ou rejoignez celui de votre partenaire.

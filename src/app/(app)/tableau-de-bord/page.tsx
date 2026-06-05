@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { auth } from "@/auth";
+import { VestaBrand } from "@/components/brand/VestaBrand";
 import { DashboardHero } from "@/components/illustrations/DashboardHero";
 import { TaskCard } from "@/components/tasks/TaskCard";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { HeroBand } from "@/components/ui/hero-band";
 import { StatCard } from "@/components/ui/stat-card";
 import { FeatureCard } from "@/components/ui/feature-card";
@@ -36,7 +38,7 @@ export default async function TableauDeBordPage() {
   return (
     <div className="stagger-children space-y-8">
       <HeroBand illustration={<DashboardHero className="w-full" />}>
-        <p className="text-caption-uppercase text-muted-foreground">Vesta</p>
+        <VestaBrand size="sm" />
         <h1 className="mt-2 text-display-md text-ink">
           Bienvenue, {session!.user!.name}
         </h1>
@@ -45,10 +47,15 @@ export default async function TableauDeBordPage() {
           connectés.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Button render={<Link href="/liste" />}>Voir la liste</Button>
-          <Button variant="outline" render={<Link href="/liste" />}>
+          <Link href="/liste" className={cn(buttonVariants())}>
+            Voir la liste
+          </Link>
+          <Link
+            href="/liste"
+            className={cn(buttonVariants({ variant: "outline" }))}
+          >
             Ajouter une idée
-          </Button>
+          </Link>
         </div>
       </HeroBand>
 

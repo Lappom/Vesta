@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
 
 type PageHeaderProps = {
-  caption?: string
+  caption?: React.ReactNode
   title: string
   description?: string
   illustration?: React.ReactNode
@@ -24,7 +24,11 @@ export function PageHeader({
     >
       <div className="space-y-2">
         {caption ? (
-          <p className="text-caption-uppercase text-muted-foreground">{caption}</p>
+          typeof caption === "string" ? (
+            <p className="text-caption-uppercase text-muted-foreground">{caption}</p>
+          ) : (
+            caption
+          )
         ) : null}
         <h1 className="text-display-sm text-ink">{title}</h1>
         {description ? (

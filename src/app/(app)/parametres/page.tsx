@@ -1,19 +1,23 @@
 import { auth } from "@/auth";
 import { logoutUser } from "@/lib/actions/auth-actions";
+import { InvitationManager } from "@/components/couple/InvitationManager";
 import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/components/ui/feature-card";
 import { PageHeader } from "@/components/ui/page-header";
 import { getUserCouple } from "@/lib/couple";
 import { regenerateInviteCode } from "@/lib/actions/couple-actions";
+import { getCoupleInvitations } from "@/lib/actions/invitation-actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function ParametresPage() {
   const session = await auth();
   const couple = await getUserCouple(session!.user!.id);
+  const invitations = await getCoupleInvitations();
 
   const membership = couple!.members.find((m) => m.userId === session!.user!.id);
   const isOwner = membership?.role === "owner";
+  const isCoupleFull = couple!.members.length >= 2;
 
   return (
     <div className="stagger-children space-y-6">
@@ -46,6 +50,16 @@ export default async function ParametresPage() {
             </Button>
           </form>
         ) : null}
+      </FeatureCard>
+
+      <FeatureCard variant="cream">
+        <h2 className="text-lg font-semibold">Liens d&apos;invitation</h2>
+        <div className="mt-4">
+          <InvitationManager
+            invitations={invitations}
+            isCoupleFull={isCoupleFull}
+          />
+        </div>
       </FeatureCard>
 
       <FeatureCard variant="cream">

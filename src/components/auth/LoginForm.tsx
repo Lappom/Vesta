@@ -6,7 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginUser } from "@/lib/actions/auth-actions";
 
-export function LoginForm() {
+type LoginFormProps = {
+  invite?: string;
+};
+
+export function LoginForm({ invite }: LoginFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -21,6 +25,7 @@ export function LoginForm() {
       }}
       className="space-y-4 rounded-xl bg-surface-soft p-6"
     >
+      {invite ? <input type="hidden" name="invite" value={invite} /> : null}
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input

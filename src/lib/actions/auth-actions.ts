@@ -51,18 +51,27 @@ export async function registerUser(formData: FormData) {
     redirect: false,
   });
 
+  const invite = String(formData.get("invite") ?? "").trim();
+  if (invite) {
+    redirect(`/rejoindre/${encodeURIComponent(invite)}`);
+  }
+
   redirect("/onboarding");
 }
 
 export async function loginUser(formData: FormData) {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
+  const invite = String(formData.get("invite") ?? "").trim();
+  const redirectTo = invite
+    ? `/rejoindre/${encodeURIComponent(invite)}`
+    : "/tableau-de-bord";
 
   try {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/tableau-de-bord",
+      redirectTo,
     });
   } catch (error) {
     if (error instanceof AuthError) {

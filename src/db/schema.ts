@@ -104,6 +104,22 @@ export const coupleMembers = pgTable(
   }),
 );
 
+export const coupleInvitations = pgTable("couple_invitation", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  coupleId: uuid("coupleId")
+    .notNull()
+    .references(() => couples.id, { onDelete: "cascade" }),
+  token: text("token").notNull().unique(),
+  createdBy: text("createdBy")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expiresAt", { mode: "date" }).notNull(),
+  revokedAt: timestamp("revokedAt", { mode: "date" }),
+  usedAt: timestamp("usedAt", { mode: "date" }),
+  usedBy: text("usedBy").references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
+});
+
 export const categories = pgTable("category", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
@@ -168,15 +184,31 @@ export const notifications = pgTable("notification", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   coupleMembers: many(coupleMembers),
+  coupleInvitations: many(coupleInvitations),
   tasks: many(tasks),
   notifications: many(notifications),
 }));
 
 export const couplesRelations = relations(couples, ({ many }) => ({
   members: many(coupleMembers),
+  invitations: many(coupleInvitations),
   tasks: many(tasks),
   notifications: many(notifications),
 }));
+
+export const coupleInvitationsRelations = relations(
+  coupleInvitations,
+  ({ one }) => ({
+    couple: one(couples, {
+      fields: [coupleInvitations.coupleId],
+      references: [couples.id],
+    }),
+    creator: one(users, {
+      fields: [coupleInvitations.createdBy],
+      references: [users.id],
+    }),
+  }),
+);
 
 export const coupleMembersRelations = relations(coupleMembers, ({ one }) => ({
   couple: one(couples, {

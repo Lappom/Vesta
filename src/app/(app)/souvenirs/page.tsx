@@ -2,8 +2,9 @@ import Image from "next/image";
 import { MemoriesHero } from "@/components/illustrations/MemoriesHero";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { getMemoryPhotos } from "@/lib/actions/task-actions";
 import { getCategoryStyle } from "@/lib/design-tokens";
 
@@ -27,7 +28,9 @@ export default async function SouvenirsPage() {
           title="Pas encore de souvenirs"
           description="Terminez une entrée avec photo pour la voir apparaître ici."
           action={
-            <Button render={<Link href="/liste" />}>Voir la liste</Button>
+            <Link href="/liste" className={cn(buttonVariants())}>
+              Voir la liste
+            </Link>
           }
         />
       ) : (

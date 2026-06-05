@@ -11,6 +11,7 @@ import {
   MapPin,
   Settings,
 } from "lucide-react";
+import { VestaBrand } from "@/components/brand/VestaBrand";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -33,11 +34,8 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
 
   return (
     <aside className="hidden lg:flex lg:w-60 lg:shrink-0 lg:flex-col lg:border-r lg:border-hairline lg:bg-background">
-      <div className="flex h-16 items-center gap-2 border-b border-hairline px-5">
-        <span className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
-          <Heart className="size-4" aria-hidden />
-        </span>
-        <span className="font-display text-lg text-ink">Vesta</span>
+      <div className="flex h-16 items-center border-b border-hairline px-5">
+        <VestaBrand href="/tableau-de-bord" size="md" />
       </div>
 
       <nav aria-label="Navigation principale" className="flex-1 px-3 py-4">

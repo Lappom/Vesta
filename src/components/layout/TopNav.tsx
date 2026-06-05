@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Heart } from "lucide-react";
+import { VestaBrand } from "@/components/brand/VestaBrand";
 
 const pageTitles: Record<string, string> = {
   "/tableau-de-bord": "Accueil",
@@ -27,12 +26,12 @@ export function TopNav({ userName, title }: TopNavProps) {
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-hairline bg-background px-4 lg:hidden">
-      <Link href="/tableau-de-bord" className="flex items-center gap-2">
-        <span className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
-          <Heart className="size-4" aria-hidden />
-        </span>
-        <span className="font-display text-lg text-ink">{resolvedTitle}</span>
-      </Link>
+      <VestaBrand
+        href="/tableau-de-bord"
+        size="md"
+        wordmark={resolvedTitle}
+        suppressHydrationWarning
+      />
       {userName ? (
         <span className="max-w-[40%] truncate text-sm text-muted-foreground">
           {userName}
