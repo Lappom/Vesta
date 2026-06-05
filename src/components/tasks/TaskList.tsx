@@ -1,8 +1,12 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import { ListHero } from "@/components/illustrations/ListHero";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { Button } from "@/components/ui/button";
+import { CategoryTabs } from "@/components/ui/category-tabs";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   Sheet,
   SheetContent,
@@ -12,7 +16,6 @@ import {
 } from "@/components/ui/sheet";
 import { TaskForm } from "@/components/tasks/TaskForm";
 import { updateTaskStatus, deleteTask } from "@/lib/actions/task-actions";
-import { cn } from "@/lib/utils";
 
 type Task = {
   id: string;
@@ -71,65 +74,64 @@ export function TaskList({ tasks, categories }: TaskListProps) {
   }, [tasks, categoryFilter, statusFilter]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">Notre liste</h1>
+    <div className="stagger-children space-y-6">
+      <div className="flex items-start justify-between gap-4">
+        <PageHeader
+          caption="Liste"
+          title="Notre liste"
+          description="Sorties, dates et moments à vivre ensemble."
+          illustration={<ListHero className="w-full" />}
+        />
         <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground">
-            Ajouter
+          <SheetTrigger
+            render={<Button className="shrink-0" />}
+          >
+            <span className="lg:hidden">Ajouter</span>
+            <span className="hidden lg:inline">Ajouter une entrée</span>
           </SheetTrigger>
-          <SheetContent side="bottom" className="max-h-[90dvh] overflow-y-auto rounded-t-3xl">
+          <SheetContent
+            side="bottom"
+            className="max-h-[90dvh] overflow-y-auto sm:max-w-lg sm:mx-auto"
+          >
             <SheetHeader>
-              <SheetTitle>Nouvelle entrée</SheetTitle>
+              <SheetTitle className="font-display text-display-sm">
+                Nouvelle entrée
+              </SheetTitle>
             </SheetHeader>
             <div className="px-4 pb-6">
-              <TaskForm categories={categories} onSuccess={() => setOpen(false)} />
+              <TaskForm
+                categories={categories}
+                onSuccess={() => setOpen(false)}
+              />
             </div>
           </SheetContent>
         </Sheet>
       </div>
 
-      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
-        {filters.map((filter) => (
-          <button
-            key={filter.id}
-            type="button"
-            onClick={() => setCategoryFilter(filter.id)}
-            className={cn(
-              "shrink-0 rounded-full px-4 py-2 text-sm font-medium",
-              categoryFilter === filter.id
-                ? "bg-muted text-foreground"
-                : "text-muted-foreground",
-            )}
-          >
-            {filter.label}
-          </button>
-        ))}
-      </div>
+      <CategoryTabs
+        items={filters}
+        value={categoryFilter}
+        onChange={setCategoryFilter}
+        aria-label="Filtrer par catégorie"
+      />
 
-      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
-        {statusFilters.map((filter) => (
-          <button
-            key={filter.id}
-            type="button"
-            onClick={() => setStatusFilter(filter.id)}
-            className={cn(
-              "shrink-0 rounded-full px-4 py-2 text-sm font-medium",
-              statusFilter === filter.id
-                ? "bg-muted text-foreground"
-                : "text-muted-foreground",
-            )}
-          >
-            {filter.label}
-          </button>
-        ))}
-      </div>
+      <CategoryTabs
+        items={statusFilters}
+        value={statusFilter}
+        onChange={setStatusFilter}
+        aria-label="Filtrer par statut"
+      />
 
       <div className="space-y-4">
         {filtered.length === 0 ? (
-          <div className="rounded-3xl bg-muted p-8 text-center text-muted-foreground">
-            Aucune entrée pour l&apos;instant. Ajoutez votre première idée à deux.
-          </div>
+          <EmptyState
+            illustration={<ListHero className="w-full" />}
+            title="Liste vide"
+            description="Ajoutez votre première idée à deux."
+            action={
+              <Button onClick={() => setOpen(true)}>Ajouter une entrée</Button>
+            }
+          />
         ) : (
           filtered.map((task) => (
             <div key={task.id} className="space-y-2">
@@ -144,11 +146,11 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                 photoUrl={task.photo?.blobUrl}
                 locationLabel={task.location?.label}
               />
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 px-1">
                 {task.status !== "done" ? (
                   <Button
                     type="button"
-                    variant="outline"
+                    variant="on-color"
                     size="sm"
                     disabled={actionPending}
                     onClick={() =>

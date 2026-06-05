@@ -1,20 +1,13 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import { AppShell } from "@/components/layout/AppShell";
+import { MapHero } from "@/components/illustrations/MapHero";
 import { MapView } from "@/components/carte/MapView";
-import { getUserCouple } from "@/lib/couple";
+import { PageHeader } from "@/components/ui/page-header";
+import { Badge } from "@/components/ui/badge";
 import { getTasksWithLocation } from "@/lib/actions/task-actions";
-import { getCategoryStyle } from "@/lib/design-tokens";
+import { categoryStyles, getCategoryStyle } from "@/lib/design-tokens";
 
 export const dynamic = "force-dynamic";
 
 export default async function CartePage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
-
-  const couple = await getUserCouple(session.user.id);
-  if (!couple) redirect("/onboarding");
-
   const tasks = await getTasksWithLocation();
   const withLocation = tasks.filter((task) => task.location);
 
@@ -28,16 +21,33 @@ export default async function CartePage() {
   }));
 
   return (
-    <AppShell title="Carte">
-      <div className="space-y-4">
-        <p className="text-sm text-muted-foreground">
-          {withLocation.length} lieu{withLocation.length > 1 ? "x" : ""} sur la
-          carte
-        </p>
-        <div className="overflow-hidden rounded-3xl border border-border shadow-sm ring-1 ring-black/5">
-          <MapView markers={markers} />
-        </div>
+    <div className="stagger-children space-y-6">
+      <PageHeader
+        caption="Carte"
+        title="Nos lieux"
+        description={`${withLocation.length} lieu${withLocation.length > 1 ? "x" : ""} sur la carte`}
+        illustration={<MapHero className="w-full" />}
+      />
+
+      <div className="overflow-hidden rounded-xl border border-hairline bg-background">
+        <MapView markers={markers} />
       </div>
-    </AppShell>
+
+      <div className="flex flex-wrap gap-2">
+        {Object.values(categoryStyles).map((category) => (
+          <Badge
+            key={category.slug}
+            variant="pill"
+            className="gap-2"
+          >
+            <span
+              className="size-2 rounded-full"
+              style={{ backgroundColor: category.bg }}
+            />
+            {category.label}
+          </Badge>
+        ))}
+      </div>
+    </div>
   );
 }

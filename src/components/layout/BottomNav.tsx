@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Heart,
+  Home,
   ListTodo,
   MapPin,
   Settings,
@@ -12,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const items = [
+  { href: "/tableau-de-bord", label: "Accueil", icon: Home },
   { href: "/liste", label: "Liste", icon: ListTodo },
   { href: "/carte", label: "Carte", icon: MapPin },
   { href: "/souvenirs", label: "Souvenirs", icon: Heart },
@@ -25,9 +27,9 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Navigation principale"
-      className="fixed bottom-0 left-1/2 z-30 w-full max-w-[480px] -translate-x-1/2 border-t border-border bg-background px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2"
+      className="fixed bottom-0 left-0 right-0 z-30 border-t border-hairline bg-background px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 lg:hidden"
     >
-      <ul className="grid grid-cols-5 gap-1">
+      <ul className="mx-auto grid max-w-lg grid-cols-6 gap-0.5">
         {items.map((item) => {
           const active = pathname.startsWith(item.href);
           const Icon = item.icon;
@@ -36,10 +38,10 @@ export function BottomNav() {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex min-h-11 flex-col items-center justify-center gap-1 rounded-full px-1 py-1 text-[11px] font-medium transition-colors",
+                  "flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-full px-0.5 py-1 text-[10px] font-medium transition-colors",
                   active
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:text-foreground",
+                    ? "bg-surface-card text-ink"
+                    : "text-muted-foreground hover:text-ink"
                 )}
               >
                 <Icon className="size-4" aria-hidden />

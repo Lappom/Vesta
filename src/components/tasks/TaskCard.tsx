@@ -53,24 +53,17 @@ export function TaskCard({
         if (onClick && (e.key === "Enter" || e.key === " ")) onClick();
       }}
       className={cn(
-        "rounded-3xl p-5 transition-opacity",
-        onClick && "cursor-pointer hover:opacity-95",
+        "rounded-xl p-5 transition-transform lg:p-6",
+        onClick && "cursor-pointer hover:scale-[1.01] active:scale-[0.99]",
       )}
       style={{ backgroundColor: style.bg, color: style.text }}
     >
       <div className="mb-3 flex items-start justify-between gap-2">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">
-            {categoryName}
-          </p>
-          <h3 className="mt-1 text-lg font-semibold tracking-tight">{title}</h3>
+          <p className="text-caption-uppercase opacity-80">{categoryName}</p>
+          <h3 className="mt-1 font-display text-display-sm">{title}</h3>
         </div>
-        <Badge
-          variant="secondary"
-          className="rounded-full border-0 bg-white/20 text-inherit"
-        >
-          {statusLabels[status]}
-        </Badge>
+        <Badge variant="on-color">{statusLabels[status]}</Badge>
       </div>
 
       {description ? (
@@ -78,29 +71,29 @@ export function TaskCard({
       ) : null}
 
       <div className="flex flex-wrap gap-2 text-xs opacity-90">
-        <span className="rounded-full bg-white/15 px-3 py-1">
+        <span className="rounded-full bg-white/15 px-3 py-1.5">
           {assigneeLabels[assignee]}
         </span>
         {dueAt ? (
-          <span className="rounded-full bg-white/15 px-3 py-1">
+          <span className="rounded-full bg-white/15 px-3 py-1.5">
             {format(dueAt, "d MMM yyyy", { locale: fr })}
           </span>
         ) : null}
         {locationLabel ? (
-          <span className="rounded-full bg-white/15 px-3 py-1">
+          <span className="rounded-full bg-white/15 px-3 py-1.5">
             {locationLabel}
           </span>
         ) : null}
       </div>
 
       {photoUrl ? (
-        <div className="relative mt-4 aspect-video overflow-hidden rounded-2xl">
+        <div className="relative mt-4 aspect-video overflow-hidden rounded-lg">
           <Image
             src={photoUrl}
             alt={`Photo pour ${title}`}
             fill
             className="object-cover"
-            sizes="(max-width: 480px) 100vw, 480px"
+            sizes="(max-width: 768px) 100vw, 640px"
           />
         </div>
       ) : null}

@@ -19,11 +19,11 @@ export function RegisterForm() {
           if (result?.error) setError(result.error);
         });
       }}
-      className="space-y-4 rounded-3xl bg-muted p-6"
+      className="space-y-4 rounded-xl bg-surface-soft p-6"
     >
       <div className="space-y-2">
         <Label htmlFor="name">Prénom</Label>
-        <Input id="name" name="name" required autoComplete="name" className="h-11" />
+        <Input id="name" name="name" required autoComplete="name" />
       </div>
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
@@ -33,7 +33,6 @@ export function RegisterForm() {
           type="email"
           required
           autoComplete="email"
-          className="h-11"
         />
       </div>
       <div className="space-y-2">
@@ -45,11 +44,10 @@ export function RegisterForm() {
           required
           minLength={8}
           autoComplete="new-password"
-          className="h-11"
         />
       </div>
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
-      <Button type="submit" className="h-11 w-full" disabled={pending}>
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      <Button type="submit" className="w-full" disabled={pending}>
         {pending ? "Inscription…" : "S'inscrire"}
       </Button>
     </form>

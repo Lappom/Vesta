@@ -87,12 +87,17 @@ export function MapView({ markers, className }: MapViewProps) {
               </div>
             </MarkerContent>
             <MarkerPopup closeButton>
-              <p className="text-sm leading-tight font-semibold">
-                {marker.title}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {marker.category}
-              </p>
+              <div className="rounded-lg bg-background p-3 ring-1 ring-hairline">
+                <p className="text-sm leading-tight font-semibold">
+                  {marker.title}
+                </p>
+                <p
+                  className="mt-1 text-xs font-medium"
+                  style={{ color: marker.color }}
+                >
+                  {marker.category}
+                </p>
+              </div>
             </MarkerPopup>
           </MapMarker>
         ))}

@@ -19,7 +19,7 @@ export function LoginForm() {
           if (result?.error) setError(result.error);
         });
       }}
-      className="space-y-4 rounded-3xl bg-muted p-6"
+      className="space-y-4 rounded-xl bg-surface-soft p-6"
     >
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
@@ -29,7 +29,6 @@ export function LoginForm() {
           type="email"
           required
           autoComplete="email"
-          className="h-11"
         />
       </div>
       <div className="space-y-2">
@@ -40,11 +39,10 @@ export function LoginForm() {
           type="password"
           required
           autoComplete="current-password"
-          className="h-11"
         />
       </div>
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
-      <Button type="submit" className="h-11 w-full" disabled={pending}>
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+      <Button type="submit" className="w-full" disabled={pending}>
         {pending ? "Connexion…" : "Se connecter"}
       </Button>
     </form>

@@ -20,7 +20,7 @@ type TaskFormProps = {
 };
 
 const selectClassName = cn(
-  "flex h-11 w-full rounded-xl border border-border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-foreground/20",
+  "flex h-11 w-full rounded-md border border-input bg-background px-4 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
 );
 
 export function TaskForm({ categories, onSuccess }: TaskFormProps) {
@@ -124,7 +124,7 @@ export function TaskForm({ categories, onSuccess }: TaskFormProps) {
         />
       </div>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
       <Button type="submit" className="h-11 w-full" disabled={pending}>
         {pending ? "Ajout…" : "Ajouter à notre liste"}

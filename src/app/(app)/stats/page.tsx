@@ -1,67 +1,71 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import { AppShell } from "@/components/layout/AppShell";
-import { Badge } from "@/components/ui/badge";
-import { getUserCouple } from "@/lib/couple";
-import { getCoupleStats } from "@/lib/actions/task-actions";
+import { StatsHero } from "@/components/illustrations/StatsHero";
+import { StatCard } from "@/components/ui/stat-card";
+import { PageHeader } from "@/components/ui/page-header";
+import { FeatureCard } from "@/components/ui/feature-card";
 import { categoryStyles } from "@/lib/design-tokens";
+import { getCoupleStats } from "@/lib/actions/task-actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function StatsPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
-
-  const couple = await getUserCouple(session.user.id);
-  if (!couple) redirect("/onboarding");
-
   const stats = await getCoupleStats();
+  const maxCategory = Math.max(
+    ...Object.values(categoryStyles).map((c) => stats.byCategory[c.slug] ?? 0),
+    1
+  );
 
   return (
-    <AppShell title="Stats">
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-3xl bg-muted p-5">
-            <p className="text-sm text-muted-foreground">Ce mois-ci</p>
-            <p className="mt-2 text-3xl font-semibold tracking-tight">
-              {stats.doneThisMonth}
-            </p>
-            <p className="text-sm">entrées terminées</p>
-          </div>
-          <div className="rounded-3xl bg-muted p-5">
-            <p className="text-sm text-muted-foreground">Taux de complétion</p>
-            <p className="mt-2 text-3xl font-semibold tracking-tight">
-              {stats.completionRate}%
-            </p>
-            <p className="text-sm">
-              {stats.doneCount}/{stats.total} au total
-            </p>
-          </div>
-        </div>
+    <div className="stagger-children space-y-8">
+      <PageHeader
+        caption="Vesta"
+        title="Vos stats"
+        description="Un aperçu de vos moments partagés."
+        illustration={<StatsHero className="w-full" />}
+      />
 
-        <section className="rounded-3xl border border-border bg-card p-5">
-          <h2 className="mb-4 text-lg font-semibold">Par catégorie</h2>
-          <div className="space-y-3">
-            {Object.values(categoryStyles).map((category) => (
-              <div
-                key={category.slug}
-                className="flex items-center justify-between gap-3"
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="size-3 rounded-full"
-                    style={{ backgroundColor: category.bg }}
-                  />
-                  <span className="text-sm font-medium">{category.label}</span>
-                </div>
-                <Badge variant="secondary" className="rounded-full">
-                  {stats.byCategory[category.slug] ?? 0}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </section>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <StatCard
+          variant="pink"
+          label="Ce mois-ci"
+          value={stats.doneThisMonth}
+          detail="entrées terminées"
+        />
+        <StatCard
+          variant="teal"
+          label="Taux de complétion"
+          value={`${stats.completionRate}%`}
+          detail={`${stats.doneCount}/${stats.total} au total`}
+        />
       </div>
-    </AppShell>
+
+      <FeatureCard variant="cream">
+        <h2 className="mb-5 font-display text-display-sm text-ink">
+          Par catégorie
+        </h2>
+        <div className="space-y-4">
+          {Object.values(categoryStyles).map((category) => {
+            const count = stats.byCategory[category.slug] ?? 0;
+            const width = Math.round((count / maxCategory) * 100);
+            return (
+              <div key={category.slug} className="space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm font-medium">{category.label}</span>
+                  <span className="text-sm text-muted-foreground">{count}</span>
+                </div>
+                <div className="h-3 overflow-hidden rounded-full bg-hairline-soft">
+                  <div
+                    className="h-full rounded-full transition-all"
+                    style={{
+                      width: `${width}%`,
+                      backgroundColor: category.bg,
+                    }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </FeatureCard>
+    </div>
   );
 }

@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { OnboardingHero } from "@/components/illustrations/OnboardingHero";
 import { OnboardingForm } from "@/components/couple/OnboardingForm";
+import { AuthLayout } from "@/components/layout/AuthLayout";
 import { getUserCouple } from "@/lib/couple";
 
 export const dynamic = "force-dynamic";
@@ -13,18 +15,15 @@ export default async function OnboardingPage() {
   if (couple) redirect("/tableau-de-bord");
 
   return (
-    <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col justify-center bg-background px-4 py-12">
-      <div className="mb-8 space-y-3 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          Liez votre espace couple
-        </h1>
+    <AuthLayout illustration={<OnboardingHero className="w-full" />}>
+      <div className="mb-8 space-y-3">
+        <p className="text-caption-uppercase text-muted-foreground">Vesta</p>
+        <h1 className="text-display-sm text-ink">Liez votre espace couple</h1>
         <p className="text-muted-foreground">
           Créez un code à 6 chiffres ou rejoignez celui de votre partenaire.
         </p>
       </div>
-      <div className="rounded-3xl bg-muted p-6">
-        <OnboardingForm />
-      </div>
-    </div>
+      <OnboardingForm />
+    </AuthLayout>
   );
 }

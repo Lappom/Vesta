@@ -4,6 +4,11 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  FeatureCard,
+  FeatureCardDescription,
+  FeatureCardTitle,
+} from "@/components/ui/feature-card";
 import { createCouple, joinCouple } from "@/lib/actions/couple-actions";
 
 export function OnboardingForm() {
@@ -11,7 +16,7 @@ export function OnboardingForm() {
   const [pending, startTransition] = useTransition();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <form
         action={() => {
           startTransition(async () => {
@@ -19,54 +24,71 @@ export function OnboardingForm() {
           });
         }}
       >
-        <Button
-          type="submit"
-          className="h-11 w-full"
-          disabled={pending}
-        >
-          Créer mon espace couple
-        </Button>
+        <FeatureCard variant="peach" className="cursor-pointer transition-transform hover:scale-[1.01]">
+          <FeatureCardTitle>Créer mon espace couple</FeatureCardTitle>
+          <FeatureCardDescription>
+            Générez un code à 6 chiffres à partager avec votre partenaire.
+          </FeatureCardDescription>
+          <Button type="submit" variant="on-color" className="mt-4" disabled={pending}>
+            Commencer
+          </Button>
+        </FeatureCard>
       </form>
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-border" />
+          <span className="w-full border-t border-hairline" />
         </div>
-        <div className="relative flex justify-center text-xs uppercase tracking-widest">
-          <span className="bg-background px-2 text-muted-foreground">ou</span>
+        <div className="relative flex justify-center">
+          <span className="bg-background px-3 text-caption-uppercase text-muted-foreground">
+            ou
+          </span>
         </div>
       </div>
 
-      <form
-        action={(formData) => {
-          setError(null);
-          startTransition(async () => {
-            const result = await joinCouple(formData);
-            if (result?.error) setError(result.error);
-          });
-        }}
-        className="space-y-4"
-      >
-        <div className="space-y-2 text-center">
-          <Label htmlFor="inviteCode" className="text-base">
-            Rejoindre avec un code à 6 chiffres
-          </Label>
-          <Input
-            id="inviteCode"
-            name="inviteCode"
-            inputMode="numeric"
-            pattern="\d{6}"
-            maxLength={6}
-            placeholder="123456"
-            className="h-14 text-center text-2xl tracking-[0.3em]"
-            required
-          />
-        </div>
-        {error ? <p className="text-center text-sm text-red-600">{error}</p> : null}
-        <Button type="submit" variant="outline" className="h-11 w-full" disabled={pending}>
-          Rejoindre mon partenaire
-        </Button>
-      </form>
+      <FeatureCard variant="lavender">
+        <form
+          action={(formData) => {
+            setError(null);
+            startTransition(async () => {
+              const result = await joinCouple(formData);
+              if (result?.error) setError(result.error);
+            });
+          }}
+          className="space-y-4"
+        >
+          <FeatureCardTitle>Rejoindre mon partenaire</FeatureCardTitle>
+          <FeatureCardDescription>
+            Entrez le code à 6 chiffres partagé par votre partenaire.
+          </FeatureCardDescription>
+          <div className="space-y-2">
+            <Label htmlFor="inviteCode" className="sr-only">
+              Code d&apos;invitation
+            </Label>
+            <Input
+              id="inviteCode"
+              name="inviteCode"
+              inputMode="numeric"
+              pattern="\d{6}"
+              maxLength={6}
+              placeholder="123456"
+              className="h-14 bg-background text-center text-2xl tracking-[0.3em]"
+              required
+            />
+          </div>
+          {error ? (
+            <p className="text-center text-sm text-destructive">{error}</p>
+          ) : null}
+          <Button
+            type="submit"
+            variant="on-color"
+            className="w-full"
+            disabled={pending}
+          >
+            Rejoindre
+          </Button>
+        </form>
+      </FeatureCard>
     </div>
   );
 }

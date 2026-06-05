@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import { auth } from "@/auth";
-import { AppShell } from "@/components/layout/AppShell";
+import { DashboardHero } from "@/components/illustrations/DashboardHero";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { Button } from "@/components/ui/button";
+import { HeroBand } from "@/components/ui/hero-band";
+import { StatCard } from "@/components/ui/stat-card";
+import { FeatureCard } from "@/components/ui/feature-card";
+import { Badge } from "@/components/ui/badge";
 import { getUserCouple } from "@/lib/couple";
 import {
+  getCoupleStats,
   getNotifications,
   getTasks,
   markNotificationsRead,
@@ -17,14 +19,12 @@ export const dynamic = "force-dynamic";
 
 export default async function TableauDeBordPage() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/connexion");
+  const couple = await getUserCouple(session!.user!.id);
 
-  const couple = await getUserCouple(session.user.id);
-  if (!couple) redirect("/onboarding");
-
-  const [tasks, notifications] = await Promise.all([
+  const [tasks, notifications, stats] = await Promise.all([
     getTasks(),
     getNotifications(),
+    getCoupleStats(),
   ]);
 
   const upcoming = tasks
@@ -34,103 +34,116 @@ export default async function TableauDeBordPage() {
   const unread = notifications.filter((n) => !n.read);
 
   return (
-    <AppShell title="Tableau de bord">
-      <div className="space-y-6">
-        <section className="rounded-3xl bg-muted p-5">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Bienvenue, {session.user.name}
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Votre espace à deux est prêt. {couple.members.length}/2 membres
-            connectés.
-          </p>
-          <div className="mt-4 flex gap-2">
-            <Link
-              href="/liste"
-              className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground"
-            >
-              Voir la liste
-            </Link>
-            <Link
-              href="/liste"
-              className="inline-flex h-11 items-center justify-center rounded-xl border border-border bg-background px-4 text-sm font-semibold"
-            >
-              Ajouter une idée
-            </Link>
-          </div>
-        </section>
+    <div className="stagger-children space-y-8">
+      <HeroBand illustration={<DashboardHero className="w-full" />}>
+        <p className="text-caption-uppercase text-muted-foreground">Vesta</p>
+        <h1 className="mt-2 text-display-md text-ink">
+          Bienvenue, {session!.user!.name}
+        </h1>
+        <p className="mt-3 max-w-prose text-sm text-body">
+          Votre espace à deux est prêt. {couple!.members.length}/2 membres
+          connectés.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button render={<Link href="/liste" />}>Voir la liste</Button>
+          <Button variant="outline" render={<Link href="/liste" />}>
+            Ajouter une idée
+          </Button>
+        </div>
+      </HeroBand>
 
-        {unread.length > 0 ? (
-          <section className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Notifications</h2>
-              <form action={markNotificationsRead}>
-                <Button type="submit" variant="ghost" size="sm">
-                  Tout marquer lu
-                </Button>
-              </form>
-            </div>
-            <ul className="space-y-2">
-              {unread.map((notification) => (
-                <li
-                  key={notification.id}
-                  className="rounded-2xl border border-border bg-card px-4 py-3 text-sm"
-                >
-                  {notification.message}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
-
-        {upcoming.length > 0 ? (
-          <section className="space-y-3">
-            <h2 className="text-lg font-semibold">À venir</h2>
-            <div className="space-y-3">
-              {upcoming.map((task) => (
-                <div
-                  key={task.id}
-                  className="rounded-2xl border border-border bg-card px-4 py-3"
-                >
-                  <p className="font-medium">{task.title}</p>
-                  {task.dueAt ? (
-                    <p className="text-sm text-muted-foreground">
-                      {format(task.dueAt, "EEEE d MMMM à HH:mm", { locale: fr })}
-                    </p>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          </section>
-        ) : null}
-
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold">Récent</h2>
-          <div className="space-y-4">
-            {recent.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                Commencez par ajouter une sortie, une date ou un moment à vivre
-                ensemble.
-              </p>
-            ) : (
-              recent.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  title={task.title}
-                  description={task.description}
-                  categorySlug={task.category.slug}
-                  categoryName={task.category.name}
-                  status={task.status}
-                  assignee={task.assignee}
-                  dueAt={task.dueAt}
-                  photoUrl={task.photo?.blobUrl}
-                  locationLabel={task.location?.label}
-                />
-              ))
-            )}
-          </div>
-        </section>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <StatCard
+          variant="teal"
+          label="À venir"
+          value={upcoming.length}
+          detail="entrées planifiées"
+        />
+        <StatCard
+          variant="peach"
+          label="Ce mois-ci"
+          value={stats.doneThisMonth}
+          detail="moments vécus"
+        />
       </div>
-    </AppShell>
+
+      {unread.length > 0 ? (
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-display-sm text-ink">
+              Notifications
+            </h2>
+            <form action={markNotificationsRead}>
+              <Button type="submit" variant="ghost" size="sm">
+                Tout marquer lu
+              </Button>
+            </form>
+          </div>
+          <ul className="space-y-2">
+            {unread.map((notification) => (
+              <li key={notification.id}>
+                <FeatureCard variant="cream" className="!p-4">
+                  <div className="flex items-start gap-3">
+                    <Badge variant="pill">Nouveau</Badge>
+                    <p className="text-sm">{notification.message}</p>
+                  </div>
+                </FeatureCard>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {upcoming.length > 0 ? (
+        <section className="space-y-4">
+          <h2 className="font-display text-display-sm text-ink">À venir</h2>
+          <div className="space-y-4">
+            {upcoming.map((task) => (
+              <TaskCard
+                key={task.id}
+                title={task.title}
+                description={task.description}
+                categorySlug={task.category.slug}
+                categoryName={task.category.name}
+                status={task.status}
+                assignee={task.assignee}
+                dueAt={task.dueAt}
+                photoUrl={task.photo?.blobUrl}
+                locationLabel={task.location?.label}
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="space-y-4">
+        <h2 className="font-display text-display-sm text-ink">Récent</h2>
+        {recent.length === 0 ? (
+          <FeatureCard variant="cream">
+            <p className="text-sm text-muted-foreground">
+              Commencez par ajouter une sortie, une date ou un moment à vivre
+              ensemble.
+            </p>
+          </FeatureCard>
+        ) : (
+          <div className="space-y-4">
+            {recent.map((task) => (
+              <TaskCard
+                key={task.id}
+                title={task.title}
+                description={task.description}
+                categorySlug={task.category.slug}
+                categoryName={task.category.name}
+                status={task.status}
+                assignee={task.assignee}
+                dueAt={task.dueAt}
+                photoUrl={task.photo?.blobUrl}
+                locationLabel={task.location?.label}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
   );
 }
