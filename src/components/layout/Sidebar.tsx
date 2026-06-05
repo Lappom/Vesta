@@ -33,7 +33,7 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden lg:flex lg:w-60 lg:shrink-0 lg:flex-col lg:border-r lg:border-hairline lg:bg-background">
+    <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-dvh lg:w-60 lg:shrink-0 lg:self-start lg:flex-col lg:overflow-y-auto lg:border-r lg:border-hairline lg:bg-background">
       <div className="flex h-16 items-center border-b border-hairline px-5">
         <VestaBrand href="/tableau-de-bord" size="md" />
       </div>

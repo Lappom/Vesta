@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,19 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { createTask } from "@/lib/actions/task-actions";
 import { cn } from "@/lib/utils";
+
+const LocationPicker = dynamic(
+  () =>
+    import("@/components/tasks/LocationPicker").then((mod) => mod.LocationPicker),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-[220px] items-center justify-center rounded-xl ring-1 ring-hairline">
+        <p className="text-sm text-muted-foreground">Chargement de la carte…</p>
+      </div>
+    ),
+  },
+);
 
 type Category = {
   id: string;
@@ -16,6 +30,7 @@ type Category = {
 
 type TaskFormProps = {
   categories: Category[];
+  sheetOpen?: boolean;
   onSuccess?: () => void;
 };
 
@@ -23,10 +38,12 @@ const selectClassName = cn(
   "flex h-11 w-full rounded-md border border-input bg-background px-4 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
 );
 
-export function TaskForm({ categories, onSuccess }: TaskFormProps) {
+export function TaskForm({ categories, sheetOpen = false, onSuccess }: TaskFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const locationLabelRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [resetSignal, setResetSignal] = useState(0);
 
   return (
     <form
@@ -40,6 +57,7 @@ export function TaskForm({ categories, onSuccess }: TaskFormProps) {
             return;
           }
           formRef.current?.reset();
+          setResetSignal((value) => value + 1);
           onSuccess?.();
         });
       }}
@@ -95,22 +113,24 @@ export function TaskForm({ categories, onSuccess }: TaskFormProps) {
       <div className="space-y-2">
         <Label htmlFor="locationLabel">Lieu (optionnel)</Label>
         <Input
+          ref={locationLabelRef}
           id="locationLabel"
           name="locationLabel"
           placeholder="Restaurant, parc, chez nous…"
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label htmlFor="lat">Latitude</Label>
-          <Input id="lat" name="lat" placeholder="48.8566" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="lng">Longitude</Label>
-          <Input id="lng" name="lng" placeholder="2.3522" />
-        </div>
-      </div>
+      {sheetOpen ? (
+        <LocationPicker
+          key={resetSignal}
+          active={sheetOpen}
+          onLabelSuggest={(label) => {
+            if (!locationLabelRef.current?.value.trim()) {
+              locationLabelRef.current!.value = label;
+            }
+          }}
+        />
+      ) : null}
 
       <div className="space-y-2">
         <Label htmlFor="photo">Photo (optionnel, max 5 Mo)</Label>

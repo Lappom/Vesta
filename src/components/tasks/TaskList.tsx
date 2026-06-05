@@ -101,6 +101,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
             <div className="px-4 pb-6">
               <TaskForm
                 categories={categories}
+                sheetOpen={open}
                 onSuccess={() => setOpen(false)}
               />
             </div>

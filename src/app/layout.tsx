@@ -15,10 +15,26 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Vesta — Notre liste à deux",
+  metadataBase: new URL("https://vesta.lappom.fr"),
+  title: "Vesta — Our list for two",
   description:
-    "Espace privé pour planifier sorties, dates et moments de couple.",
+    "A private space to plan dates, outings, and couple moments together.",
   applicationName: "Vesta",
+  openGraph: {
+    title: "Vesta — Our list for two",
+    description:
+      "A private space to plan dates, outings, and couple moments together.",
+    url: "https://vesta.lappom.fr",
+    siteName: "Vesta",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vesta — Our list for two",
+    description:
+      "A private space to plan dates, outings, and couple moments together.",
+  },
 };
 
 export default function RootLayout({
