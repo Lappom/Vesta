@@ -22,7 +22,13 @@ function isPublicPath(pathname: string) {
     pathname === "/opengraph-image" ||
     pathname.startsWith("/opengraph-image?") ||
     pathname === "/twitter-image" ||
-    pathname.startsWith("/twitter-image?")
+    pathname.startsWith("/twitter-image?") ||
+    pathname === "/icon" ||
+    pathname.startsWith("/icon?") ||
+    pathname === "/apple-icon" ||
+    pathname.startsWith("/apple-icon?") ||
+    pathname === "/manifest.webmanifest" ||
+    pathname === "/~offline"
   ) {
     return true;
   }

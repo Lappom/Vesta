@@ -1,7 +1,13 @@
-import type { Metadata } from "next";
+import { SerwistProvider } from "@serwist/next/react";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
+
+const APP_NAME = "Vesta";
+const APP_DEFAULT_TITLE = "Vesta — Our list for two";
+const APP_DESCRIPTION =
+  "A private space to plan dates, outings, and couple moments together.";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -16,16 +22,25 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://vesta.lappom.fr"),
-  title: "Vesta — Our list for two",
-  description:
-    "A private space to plan dates, outings, and couple moments together.",
-  applicationName: "Vesta",
+  applicationName: APP_NAME,
+  title: {
+    default: APP_DEFAULT_TITLE,
+    template: `%s — ${APP_NAME}`,
+  },
+  description: APP_DESCRIPTION,
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_NAME,
+  },
+  formatDetection: {
+    telephone: false,
+  },
   openGraph: {
-    title: "Vesta — Our list for two",
-    description:
-      "A private space to plan dates, outings, and couple moments together.",
+    title: APP_DEFAULT_TITLE,
+    description: APP_DESCRIPTION,
     url: "https://vesta.lappom.fr",
-    siteName: "Vesta",
+    siteName: APP_NAME,
     locale: "en_US",
     type: "website",
     images: [
@@ -33,17 +48,21 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Vesta — Our list for two",
+        alt: APP_DEFAULT_TITLE,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vesta — Our list for two",
-    description:
-      "A private space to plan dates, outings, and couple moments together.",
+    title: APP_DEFAULT_TITLE,
+    description: APP_DESCRIPTION,
     images: ["/opengraph-image"],
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#fffaf0",
+  colorScheme: "light",
 };
 
 export default function RootLayout({
@@ -54,7 +73,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${jakarta.variable} h-full`}>
       <body className="min-h-full font-sans">
-        {children}
+        <SerwistProvider
+          swUrl="/sw.js"
+          disable={process.env.NODE_ENV === "development"}
+        >
+          {children}
+        </SerwistProvider>
         <Toaster position="top-center" richColors />
       </body>
     </html>
