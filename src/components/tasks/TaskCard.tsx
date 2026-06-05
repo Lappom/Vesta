@@ -1,0 +1,109 @@
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import { getCategoryStyle } from "@/lib/design-tokens";
+import { cn } from "@/lib/utils";
+
+type TaskCardProps = {
+  title: string;
+  description?: string | null;
+  categorySlug: string;
+  categoryName: string;
+  status: "todo" | "in_progress" | "done";
+  assignee: "me" | "partner" | "both";
+  dueAt?: Date | null;
+  photoUrl?: string | null;
+  locationLabel?: string | null;
+  onClick?: () => void;
+};
+
+const statusLabels = {
+  todo: "À faire",
+  in_progress: "En cours",
+  done: "Fait",
+} as const;
+
+const assigneeLabels = {
+  me: "Moi",
+  partner: "Partenaire",
+  both: "Nous deux",
+} as const;
+
+export function TaskCard({
+  title,
+  description,
+  categorySlug,
+  categoryName,
+  status,
+  assignee,
+  dueAt,
+  photoUrl,
+  locationLabel,
+  onClick,
+}: TaskCardProps) {
+  const style = getCategoryStyle(categorySlug);
+
+  return (
+    <article
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (onClick && (e.key === "Enter" || e.key === " ")) onClick();
+      }}
+      className={cn(
+        "rounded-3xl p-5 transition-opacity",
+        onClick && "cursor-pointer hover:opacity-95",
+      )}
+      style={{ backgroundColor: style.bg, color: style.text }}
+    >
+      <div className="mb-3 flex items-start justify-between gap-2">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider opacity-80">
+            {categoryName}
+          </p>
+          <h3 className="mt-1 text-lg font-semibold tracking-tight">{title}</h3>
+        </div>
+        <Badge
+          variant="secondary"
+          className="rounded-full border-0 bg-white/20 text-inherit"
+        >
+          {statusLabels[status]}
+        </Badge>
+      </div>
+
+      {description ? (
+        <p className="mb-3 text-sm leading-relaxed opacity-90">{description}</p>
+      ) : null}
+
+      <div className="flex flex-wrap gap-2 text-xs opacity-90">
+        <span className="rounded-full bg-white/15 px-3 py-1">
+          {assigneeLabels[assignee]}
+        </span>
+        {dueAt ? (
+          <span className="rounded-full bg-white/15 px-3 py-1">
+            {format(dueAt, "d MMM yyyy", { locale: fr })}
+          </span>
+        ) : null}
+        {locationLabel ? (
+          <span className="rounded-full bg-white/15 px-3 py-1">
+            {locationLabel}
+          </span>
+        ) : null}
+      </div>
+
+      {photoUrl ? (
+        <div className="relative mt-4 aspect-video overflow-hidden rounded-2xl">
+          <Image
+            src={photoUrl}
+            alt={`Photo pour ${title}`}
+            fill
+            className="object-cover"
+            sizes="(max-width: 480px) 100vw, 480px"
+          />
+        </div>
+      ) : null}
+    </article>
+  );
+}
