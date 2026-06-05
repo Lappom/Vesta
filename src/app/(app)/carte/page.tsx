@@ -23,7 +23,8 @@ export default async function CartePage() {
     lat: task.location!.lat,
     lng: task.location!.lng,
     color: getCategoryStyle(task.category.slug).bg,
-    title: `<strong>${task.title}</strong><br/>${task.category.name}`,
+    title: task.title,
+    category: task.category.name,
   }));
 
   return (
@@ -33,7 +34,7 @@ export default async function CartePage() {
           {withLocation.length} lieu{withLocation.length > 1 ? "x" : ""} sur la
           carte
         </p>
-        <div className="overflow-hidden rounded-3xl border border-border bg-muted">
+        <div className="overflow-hidden rounded-3xl border border-border shadow-sm ring-1 ring-black/5">
           <MapView markers={markers} />
         </div>
       </div>
