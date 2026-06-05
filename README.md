@@ -37,16 +37,32 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 
 ## Vercel
 
+Projet lié : `luke-james-projects-ad485e15/vesta`  
+URL production : https://vesta-lyart-ten.vercel.app
+
 ```bash
 vercel login
 vercel link --yes
 vercel integration add neon
-vercel integration add blob
-vercel env add AUTH_SECRET development preview production
+vercel env add AUTH_SECRET development
+vercel env add AUTH_SECRET production
 vercel env pull .env.local --yes
 pnpm db:push
 pnpm db:seed
 vercel deploy
+```
+
+### Photos (Vercel Blob)
+
+Créer un Blob store depuis le [dashboard Vercel](https://vercel.com/dashboard) → Storage → Blob, puis ajouter `BLOB_READ_WRITE_TOKEN` aux variables d'environnement.
+
+## GitHub
+
+`gh` est installé. Connectez-vous puis créez le dépôt privé :
+
+```bash
+gh auth login
+gh repo create Vesta --private --source=. --remote=origin --push
 ```
 
 ## Scripts
