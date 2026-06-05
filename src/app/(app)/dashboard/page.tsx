@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { VestaBrand } from "@/components/brand/VestaBrand";
 import { DashboardHero } from "@/components/illustrations/DashboardHero";
@@ -10,23 +11,26 @@ import { StatCard } from "@/components/ui/stat-card";
 import { FeatureCard } from "@/components/ui/feature-card";
 import { Badge } from "@/components/ui/badge";
 import { getUserCouple } from "@/lib/couple";
+import { markNotificationsRead } from "@/lib/actions/task-actions";
 import {
-  getCoupleStats,
-  getNotifications,
-  getTasks,
-  markNotificationsRead,
-} from "@/lib/actions/task-actions";
+  queryCoupleNotifications,
+  queryCoupleStats,
+  queryCoupleTasks,
+} from "@/lib/queries/tasks";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const session = await auth();
-  const couple = await getUserCouple(session!.user!.id);
+  if (!session?.user?.id) redirect("/login");
+
+  const couple = await getUserCouple(session.user.id);
+  if (!couple) redirect("/onboarding");
 
   const [tasks, notifications, stats] = await Promise.all([
-    getTasks(),
-    getNotifications(),
-    getCoupleStats(),
+    queryCoupleTasks(couple.id),
+    queryCoupleNotifications(couple.id, session.user.id),
+    queryCoupleStats(couple.id),
   ]);
 
   const upcoming = tasks
@@ -40,10 +44,10 @@ export default async function DashboardPage() {
       <HeroBand illustration={<DashboardHero className="w-full" />}>
         <VestaBrand size="sm" />
         <h1 className="mt-2 text-display-md text-ink">
-          Welcome, {session!.user!.name}
+          Welcome, {session.user.name ?? "there"}
         </h1>
         <p className="mt-3 max-w-prose text-sm text-body">
-          Your space for two is ready. {couple!.members.length}/2 members
+          Your space for two is ready. {couple.members.length}/2 members
           connected.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">

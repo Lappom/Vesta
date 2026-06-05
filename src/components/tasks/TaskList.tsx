@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { ListHero } from "@/components/illustrations/ListHero";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { TaskListMobileItem } from "@/components/tasks/TaskListMobileItem";
@@ -57,11 +58,37 @@ const statusFilters = [
 ];
 
 export function TaskList({ tasks, categories }: TaskListProps) {
+  const router = useRouter();
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [addOpen, setAddOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [actionPending, startAction] = useTransition();
+
+  useEffect(() => {
+    const refresh = () => router.refresh();
+
+    const interval = window.setInterval(refresh, 15_000);
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refresh();
+      }
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [router]);
+
+  const runAction = (action: () => Promise<void>) => {
+    startAction(async () => {
+      await action();
+      router.refresh();
+    });
+  };
 
   const filtered = useMemo(() => {
     return tasks.filter((task) => {
@@ -104,7 +131,10 @@ export function TaskList({ tasks, categories }: TaskListProps) {
               <TaskForm
                 categories={categories}
                 sheetOpen={addOpen}
-                onSuccess={() => setAddOpen(false)}
+                onSuccess={() => {
+                  setAddOpen(false);
+                  router.refresh();
+                }}
               />
             </div>
           </SheetContent>
@@ -166,14 +196,12 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                     actionPending={actionPending}
                     onEdit={() => setEditingTask(task)}
                     onMarkDone={() =>
-                      startAction(() => updateTaskStatus(task.id, "done"))
+                      runAction(() => updateTaskStatus(task.id, "done"))
                     }
                     onMarkInProgress={() =>
-                      startAction(() =>
-                        updateTaskStatus(task.id, "in_progress"),
-                      )
+                      runAction(() => updateTaskStatus(task.id, "in_progress"))
                     }
-                    onDelete={() => startAction(() => deleteTask(task.id))}
+                    onDelete={() => runAction(() => deleteTask(task.id))}
                   />
                 ))}
               </div>
@@ -203,7 +231,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                       size="sm"
                       disabled={actionPending}
                       onClick={() =>
-                        startAction(() => updateTaskStatus(task.id, "done"))
+                        runAction(() => updateTaskStatus(task.id, "done"))
                       }
                     >
                       Mark done
@@ -216,7 +244,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                       size="sm"
                       disabled={actionPending}
                       onClick={() =>
-                        startAction(() =>
+                        runAction(() =>
                           updateTaskStatus(task.id, "in_progress"),
                         )
                       }
@@ -229,7 +257,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                     variant="ghost"
                     size="sm"
                     disabled={actionPending}
-                    onClick={() => startAction(() => deleteTask(task.id))}
+                    onClick={() => runAction(() => deleteTask(task.id))}
                   >
                     Delete
                   </Button>
@@ -269,7 +297,10 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                   location: editingTask.location,
                   photoUrl: editingTask.photo?.blobUrl,
                 }}
-                onSuccess={() => setEditingTask(null)}
+                onSuccess={() => {
+                  setEditingTask(null);
+                  router.refresh();
+                }}
               />
             ) : null}
           </div>
