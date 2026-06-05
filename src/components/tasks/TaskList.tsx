@@ -16,8 +16,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { MarkDoneDialog } from "@/components/tasks/MarkDoneDialog";
 import { TaskForm } from "@/components/tasks/TaskForm";
-import { updateTaskStatus, deleteTask } from "@/lib/actions/task-actions";
+import {
+  completeTask,
+  updateTaskStatus,
+  deleteTask,
+} from "@/lib/actions/task-actions";
 
 type Task = {
   id: string;
@@ -63,6 +68,8 @@ export function TaskList({ tasks, categories }: TaskListProps) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [addOpen, setAddOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [markDoneTask, setMarkDoneTask] = useState<Task | null>(null);
+  const [markDoneError, setMarkDoneError] = useState<string | null>(null);
   const [actionPending, startAction] = useTransition();
 
   useEffect(() => {
@@ -86,6 +93,26 @@ export function TaskList({ tasks, categories }: TaskListProps) {
   const runAction = (action: () => Promise<void>) => {
     startAction(async () => {
       await action();
+      router.refresh();
+    });
+  };
+
+  const handleMarkDoneComplete = (formData: FormData | null) => {
+    if (!markDoneTask) return;
+
+    setMarkDoneError(null);
+    startAction(async () => {
+      if (formData) {
+        const result = await completeTask(formData);
+        if (result?.error) {
+          setMarkDoneError(result.error);
+          return;
+        }
+      } else {
+        await updateTaskStatus(markDoneTask.id, "done");
+      }
+
+      setMarkDoneTask(null);
       router.refresh();
     });
   };
@@ -195,9 +222,10 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                     task={task}
                     actionPending={actionPending}
                     onEdit={() => setEditingTask(task)}
-                    onMarkDone={() =>
-                      runAction(() => updateTaskStatus(task.id, "done"))
-                    }
+                    onMarkDone={() => {
+                      setMarkDoneError(null);
+                      setMarkDoneTask(task);
+                    }}
                     onMarkInProgress={() =>
                       runAction(() => updateTaskStatus(task.id, "in_progress"))
                     }
@@ -230,9 +258,10 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                       variant="on-color"
                       size="sm"
                       disabled={actionPending}
-                      onClick={() =>
-                        runAction(() => updateTaskStatus(task.id, "done"))
-                      }
+                      onClick={() => {
+                        setMarkDoneError(null);
+                        setMarkDoneTask(task);
+                      }}
                     >
                       Mark done
                     </Button>
@@ -267,6 +296,21 @@ export function TaskList({ tasks, categories }: TaskListProps) {
           </div>
         </>
       )}
+
+      <MarkDoneDialog
+        open={markDoneTask !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setMarkDoneTask(null);
+            setMarkDoneError(null);
+          }
+        }}
+        taskId={markDoneTask?.id ?? ""}
+        taskTitle={markDoneTask?.title ?? ""}
+        pending={actionPending}
+        serverError={markDoneError}
+        onComplete={handleMarkDoneComplete}
+      />
 
       <Sheet
         open={editingTask !== null}

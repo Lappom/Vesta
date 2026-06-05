@@ -41,6 +41,34 @@ async function getSessionCouple() {
   return { session, couple };
 }
 
+async function saveTaskPhoto(taskId: string, photo: File) {
+  if (photo.size > 5 * 1024 * 1024) {
+    return { error: "Photo must not exceed 5 MB" } as const;
+  }
+
+  const blob = await put(`tasks/${taskId}/${photo.name}`, photo, {
+    access: "public",
+  });
+
+  const existingPhoto = await db.query.taskPhotos.findFirst({
+    where: eq(taskPhotos.taskId, taskId),
+  });
+
+  if (existingPhoto) {
+    await db
+      .update(taskPhotos)
+      .set({ blobUrl: blob.url })
+      .where(eq(taskPhotos.taskId, taskId));
+  } else {
+    await db.insert(taskPhotos).values({
+      taskId,
+      blobUrl: blob.url,
+    });
+  }
+
+  return { success: true } as const;
+}
+
 async function notifyPartner(
   coupleId: string,
   actorId: string,
@@ -110,16 +138,10 @@ export async function createTask(formData: FormData) {
 
   const photo = formData.get("photo") as File | null;
   if (photo && photo.size > 0) {
-    if (photo.size > 5 * 1024 * 1024) {
-      return { error: "Photo must not exceed 5 MB" };
+    const photoResult = await saveTaskPhoto(created.id, photo);
+    if ("error" in photoResult) {
+      return photoResult;
     }
-    const blob = await put(`tasks/${created.id}/${photo.name}`, photo, {
-      access: "public",
-    });
-    await db.insert(taskPhotos).values({
-      taskId: created.id,
-      blobUrl: blob.url,
-    });
   }
 
   await notifyPartner(
@@ -207,27 +229,9 @@ export async function updateTask(formData: FormData) {
 
   const photo = formData.get("photo") as File | null;
   if (photo && photo.size > 0) {
-    if (photo.size > 5 * 1024 * 1024) {
-      return { error: "Photo must not exceed 5 MB" };
-    }
-    const blob = await put(`tasks/${taskId}/${photo.name}`, photo, {
-      access: "public",
-    });
-
-    const existingPhoto = await db.query.taskPhotos.findFirst({
-      where: eq(taskPhotos.taskId, taskId),
-    });
-
-    if (existingPhoto) {
-      await db
-        .update(taskPhotos)
-        .set({ blobUrl: blob.url })
-        .where(eq(taskPhotos.taskId, taskId));
-    } else {
-      await db.insert(taskPhotos).values({
-        taskId,
-        blobUrl: blob.url,
-      });
+    const photoResult = await saveTaskPhoto(taskId, photo);
+    if ("error" in photoResult) {
+      return photoResult;
     }
   }
 
@@ -235,6 +239,53 @@ export async function updateTask(formData: FormData) {
     couple.id,
     session.user.id,
     `${session.user.name} updated "${parsed.data.title}"`,
+  );
+
+  revalidatePath("/list");
+  revalidatePath("/dashboard");
+  revalidatePath("/map");
+  revalidatePath("/memories");
+  revalidatePath("/stats");
+  return { success: true };
+}
+
+export async function completeTask(formData: FormData) {
+  const { session, couple } = await getSessionCouple();
+
+  const taskId = formData.get("taskId");
+  if (typeof taskId !== "string" || !taskId) {
+    return { error: "Task ID is required" };
+  }
+
+  const task = await db.query.tasks.findFirst({
+    where: and(eq(tasks.id, taskId), eq(tasks.coupleId, couple.id)),
+  });
+
+  if (!task) {
+    return { error: "Task not found" };
+  }
+
+  const photo = formData.get("photo") as File | null;
+  if (photo && photo.size > 0) {
+    const photoResult = await saveTaskPhoto(taskId, photo);
+    if ("error" in photoResult) {
+      return photoResult;
+    }
+  }
+
+  await db
+    .update(tasks)
+    .set({
+      status: "done",
+      completedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(eq(tasks.id, taskId));
+
+  await notifyPartner(
+    couple.id,
+    session.user.id,
+    `${session.user.name} completed "${task.title}"`,
   );
 
   revalidatePath("/list");
