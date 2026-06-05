@@ -4,12 +4,36 @@ import { NextResponse } from "next/server";
 const publicRoutes = ["/login", "/signup"];
 const onboardingRoute = "/onboarding";
 
+function isPublicPath(pathname: string) {
+  if (publicRoutes.some((route) => pathname.startsWith(route))) {
+    return true;
+  }
+
+  if (pathname.startsWith("/api/auth")) {
+    return true;
+  }
+
+  if (pathname.startsWith("/join/")) {
+    return true;
+  }
+
+  // Next.js metadata routes (no file extension, so matcher includes them)
+  if (
+    pathname === "/opengraph-image" ||
+    pathname.startsWith("/opengraph-image?") ||
+    pathname === "/twitter-image" ||
+    pathname.startsWith("/twitter-image?")
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!req.auth;
-  const isPublic =
-    publicRoutes.some((route) => pathname.startsWith(route)) ||
-    pathname.startsWith("/api/auth");
+  const isPublic = isPublicPath(pathname);
 
   if (
     !isLoggedIn &&
