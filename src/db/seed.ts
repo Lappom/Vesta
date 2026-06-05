@@ -7,25 +7,25 @@ import { categories } from "./schema";
 
 const defaultCategories = [
   {
-    name: "Sortie romantique",
+    name: "Romantic outing",
     slug: "sortie",
     icon: "heart",
     color: "#ff4d8b",
   },
   {
-    name: "Date / rendez-vous",
+    name: "Date night",
     slug: "date",
     icon: "calendar-heart",
     color: "#b8a4ed",
   },
   {
-    name: "Pratique",
+    name: "Practical",
     slug: "pratique",
     icon: "check-circle",
     color: "#ffb084",
   },
   {
-    name: "Intimité",
+    name: "Intimacy",
     slug: "intimite",
     icon: "sparkles",
     color: "#1a3a3a",
@@ -44,7 +44,10 @@ async function seed() {
     await db
       .insert(categories)
       .values(category)
-      .onConflictDoNothing({ target: categories.slug });
+      .onConflictDoUpdate({
+        target: categories.slug,
+        set: { name: category.name },
+      });
   }
 
   console.log("Seed completed.");

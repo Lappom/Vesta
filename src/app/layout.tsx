@@ -43,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${fraunces.variable} ${jakarta.variable} h-full`}>
+    <html lang="en" className={`${fraunces.variable} ${jakarta.variable} h-full`}>
       <body className="min-h-full font-sans">
         {children}
         <Toaster position="top-center" richColors />

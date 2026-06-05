@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 const querySchema = z.object({
-  q: z.string().trim().min(3, "La recherche doit contenir au moins 3 caractères"),
+  q: z.string().trim().min(3, "Search must be at least 3 characters"),
 });
 
 type NominatimResult = {
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.issues[0]?.message ?? "Requête invalide" },
+      { error: parsed.error.issues[0]?.message ?? "Invalid request" },
       { status: 400 },
     );
   }
@@ -33,20 +33,21 @@ export async function GET(request: Request) {
       headers: {
         "User-Agent": "Vesta/0.1 (couple activity tracker)",
         Accept: "application/json",
+        "Accept-Language": "en",
       },
       next: { revalidate: 3600 },
     });
 
     if (response.status === 429) {
       return NextResponse.json(
-        { error: "Trop de recherches, réessayez dans un instant" },
+        { error: "Too many searches, please try again shortly" },
         { status: 429 },
       );
     }
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: "Le service de recherche est indisponible" },
+        { error: "Search service is unavailable" },
         { status: 502 },
       );
     }
@@ -62,7 +63,7 @@ export async function GET(request: Request) {
     });
   } catch {
     return NextResponse.json(
-      { error: "Impossible de contacter le service de recherche" },
+      { error: "Unable to reach search service" },
       { status: 502 },
     );
   }

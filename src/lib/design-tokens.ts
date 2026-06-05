@@ -69,28 +69,28 @@ export function getFeatureCardVariant(variant: FeatureCardVariant) {
 export const categoryStyles = {
   sortie: {
     slug: "sortie",
-    label: "Sortie romantique",
+    label: "Romantic outing",
     bg: colors.brandPink,
     text: colors.onDark,
     variant: "pink" as FeatureCardVariant,
   },
   date: {
     slug: "date",
-    label: "Date / rendez-vous",
+    label: "Date night",
     bg: colors.brandLavender,
     text: colors.ink,
     variant: "lavender" as FeatureCardVariant,
   },
   pratique: {
     slug: "pratique",
-    label: "Pratique",
+    label: "Practical",
     bg: colors.brandPeach,
     text: colors.ink,
     variant: "peach" as FeatureCardVariant,
   },
   intimite: {
     slug: "intimite",
-    label: "Intimité",
+    label: "Intimacy",
     bg: colors.brandTeal,
     text: colors.onDark,
     variant: "teal" as FeatureCardVariant,

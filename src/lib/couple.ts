@@ -26,7 +26,7 @@ export async function getUserCouple(userId: string) {
 export async function requireUserCouple(userId: string) {
   const couple = await getUserCouple(userId);
   if (!couple) {
-    throw new Error("Aucun espace couple trouvé");
+    throw new Error("No couple space found");
   }
   return couple;
 }
