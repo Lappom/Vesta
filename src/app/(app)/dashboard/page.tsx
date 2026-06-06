@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { DashboardHero } from "@/components/illustrations/DashboardHero";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -40,7 +39,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="stagger-children space-y-8">
-      <HeroBand illustration={<DashboardHero className="w-full" />}>
+      <HeroBand illustration="dashboard">
         <h1 className="text-display-md text-ink">
           Welcome, {session.user.name ?? "there"}
         </h1>

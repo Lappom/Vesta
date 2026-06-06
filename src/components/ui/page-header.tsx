@@ -1,12 +1,18 @@
-import { cn } from "@/lib/utils"
+"use client";
+
+import {
+  IllustrationSlot,
+  type IllustrationId,
+} from "@/components/illustrations/IllustrationSlot";
+import { cn } from "@/lib/utils";
 
 type PageHeaderProps = {
-  caption?: React.ReactNode
-  title: string
-  description?: string
-  illustration?: React.ReactNode
-  className?: string
-}
+  caption?: React.ReactNode;
+  title: string;
+  description?: string;
+  illustration?: IllustrationId;
+  className?: string;
+};
 
 export function PageHeader({
   caption,
@@ -19,13 +25,15 @@ export function PageHeader({
     <header
       className={cn(
         "flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between",
-        className
+        className,
       )}
     >
       <div className="space-y-2">
         {caption ? (
           typeof caption === "string" ? (
-            <p className="text-caption-uppercase text-muted-foreground">{caption}</p>
+            <p className="text-caption-uppercase text-muted-foreground">
+              {caption}
+            </p>
           ) : (
             caption
           )
@@ -36,8 +44,10 @@ export function PageHeader({
         ) : null}
       </div>
       {illustration ? (
-        <div className="hidden w-32 shrink-0 sm:block lg:w-40">{illustration}</div>
+        <div className="hidden w-32 shrink-0 sm:block lg:w-40">
+          <IllustrationSlot id={illustration} className="w-full" />
+        </div>
       ) : null}
     </header>
-  )
+  );
 }

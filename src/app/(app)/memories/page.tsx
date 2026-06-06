@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { MemoriesHero } from "@/components/illustrations/MemoriesHero";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { buttonVariants } from "@/components/ui/button";
@@ -19,12 +18,12 @@ export default async function MemoriesPage() {
         caption="Memories"
         title="Our moments"
         description="Photos from moments you've checked off together."
-        illustration={<MemoriesHero className="w-full" />}
+        illustration="memories"
       />
 
       {memories.length === 0 ? (
         <EmptyState
-          illustration={<MemoriesHero className="w-full" />}
+          illustration="memories"
           title="No memories yet"
           description="Complete an entry with a photo to see it here."
           action={

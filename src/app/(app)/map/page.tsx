@@ -1,4 +1,3 @@
-import { MapHero } from "@/components/illustrations/MapHero";
 import { MapView } from "@/components/carte/MapView";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +30,7 @@ export default async function MapPage() {
         caption="Map"
         title="Our places"
         description={placeLabel}
-        illustration={<MapHero className="w-full" />}
+        illustration="map"
       />
 
       <div className="overflow-hidden rounded-xl border border-hairline bg-background">

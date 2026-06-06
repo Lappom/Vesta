@@ -1,12 +1,18 @@
-import { cn } from "@/lib/utils"
+"use client";
+
+import {
+  IllustrationSlot,
+  type IllustrationId,
+} from "@/components/illustrations/IllustrationSlot";
+import { cn } from "@/lib/utils";
 
 type EmptyStateProps = {
-  illustration?: React.ReactNode
-  title: string
-  description: string
-  action?: React.ReactNode
-  className?: string
-}
+  illustration?: IllustrationId;
+  title: string;
+  description: string;
+  action?: React.ReactNode;
+  className?: string;
+};
 
 export function EmptyState({
   illustration,
@@ -19,15 +25,19 @@ export function EmptyState({
     <div
       className={cn(
         "flex flex-col items-center rounded-xl bg-surface-soft px-6 py-12 text-center",
-        className
+        className,
       )}
     >
       {illustration ? (
-        <div className="mb-6 w-40 opacity-90">{illustration}</div>
+        <div className="mb-6 w-40 opacity-90">
+          <IllustrationSlot id={illustration} className="w-full" />
+        </div>
       ) : null}
       <h3 className="font-display text-display-sm text-ink">{title}</h3>
-      <p className="mt-2 max-w-sm text-sm text-muted-foreground">{description}</p>
+      <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+        {description}
+      </p>
       {action ? <div className="mt-6">{action}</div> : null}
     </div>
-  )
+  );
 }

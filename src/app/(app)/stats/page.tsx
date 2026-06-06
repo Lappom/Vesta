@@ -1,4 +1,3 @@
-import { StatsHero } from "@/components/illustrations/StatsHero";
 import { VestaBrand } from "@/components/brand/VestaBrand";
 import { StatCard } from "@/components/ui/stat-card";
 import { PageHeader } from "@/components/ui/page-header";
@@ -21,7 +20,7 @@ export default async function StatsPage() {
         caption={<VestaBrand size="sm" />}
         title="Your stats"
         description="An overview of your shared moments."
-        illustration={<StatsHero className="w-full" />}
+        illustration="stats"
       />
 
       <div className="grid gap-4 sm:grid-cols-2">

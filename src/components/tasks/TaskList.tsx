@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ListHero } from "@/components/illustrations/ListHero";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { TaskListMobileItem } from "@/components/tasks/TaskListMobileItem";
 import { Button } from "@/components/ui/button";
@@ -136,7 +135,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
           caption="List"
           title="Our list"
           description="Outings, dates, and moments to share together."
-          illustration={<ListHero className="w-full" />}
+          illustration="list"
         />
         <Sheet open={addOpen} onOpenChange={setAddOpen}>
           <SheetTrigger
@@ -185,7 +184,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
 
       {filtered.length === 0 ? (
         <EmptyState
-          illustration={<ListHero className="w-full" />}
+          illustration="list"
           title="Empty list"
           description="Add your first idea for two."
           action={

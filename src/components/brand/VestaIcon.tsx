@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 
 type VestaIconProps = {
@@ -5,47 +7,28 @@ type VestaIconProps = {
   title?: string;
 };
 
+const VESTA_ICON_MARKUP = `
+  <ellipse cx="24" cy="40" rx="16" ry="4" fill="#a4d4c5" opacity="0.35"/>
+  <rect x="2" y="2" width="44" height="44" rx="13" fill="#faf5e8" stroke="#e5e5e5" stroke-width="1"/>
+  <circle cx="17" cy="26" r="11" fill="#ffb084"/>
+  <ellipse cx="14" cy="22" rx="3" ry="2" fill="#ffffff" opacity="0.35"/>
+  <circle cx="31" cy="26" r="11" fill="#ff4d8b"/>
+  <ellipse cx="28" cy="22" rx="3" ry="2" fill="#ffffff" opacity="0.3"/>
+  <path d="M20 26 Q24 22 28 26" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" opacity="0.12"/>
+  <path d="M24 20 C22 24 22 26 24 30 C26 26 26 24 24 20Z" fill="#e8b94a"/>
+  <path d="M24 22 C23 25 23 27 24 28 C25 27 25 25 24 22Z" fill="#ffb084"/>
+`;
+
 export function VestaIcon({ className, title }: VestaIconProps) {
   return (
     <svg
       viewBox="0 0 48 48"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0", className)}
+      className={cn("shrink-0 overflow-visible", className)}
       role={title ? "img" : undefined}
       aria-hidden={title ? undefined : true}
       aria-label={title}
-    >
-      <ellipse cx="24" cy="40" rx="16" ry="4" fill="#a4d4c5" opacity="0.35" />
-      <rect
-        x="2"
-        y="2"
-        width="44"
-        height="44"
-        rx="13"
-        fill="#faf5e8"
-        stroke="#e5e5e5"
-        strokeWidth="1"
-      />
-      <circle cx="17" cy="26" r="11" fill="#ffb084" />
-      <ellipse cx="14" cy="22" rx="3" ry="2" fill="#ffffff" opacity="0.35" />
-      <circle cx="31" cy="26" r="11" fill="#ff4d8b" />
-      <ellipse cx="28" cy="22" rx="3" ry="2" fill="#ffffff" opacity="0.3" />
-      <path
-        d="M20 26 Q24 22 28 26"
-        stroke="#0a0a0a"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.12"
-      />
-      <path
-        d="M24 20 C22 24 22 26 24 30 C26 26 26 24 24 20Z"
-        fill="#e8b94a"
-      />
-      <path
-        d="M24 22 C23 25 23 27 24 28 C25 27 25 25 24 22Z"
-        fill="#ffb084"
-      />
-    </svg>
+      dangerouslySetInnerHTML={{ __html: VESTA_ICON_MARKUP }}
+    />
   );
 }
