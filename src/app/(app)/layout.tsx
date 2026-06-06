@@ -1,18 +1,12 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
 import { AppShell } from "@/components/layout/AppShell";
-import { getUserCouple } from "@/lib/couple";
+import { getCachedCouple } from "@/lib/session";
 
 export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
-
-  const couple = await getUserCouple(session.user.id);
-  if (!couple) redirect("/onboarding");
+  await getCachedCouple();
 
   return <AppShell>{children}</AppShell>;
 }

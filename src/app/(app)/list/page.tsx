@@ -1,10 +1,15 @@
 import { TaskList } from "@/components/tasks/TaskList";
-import { getCategories, getTasks } from "@/lib/actions/task-actions";
-
-export const dynamic = "force-dynamic";
+import { getCategories } from "@/lib/actions/task-actions";
+import { queryCoupleTasks } from "@/lib/queries/tasks";
+import { getCachedCouple } from "@/lib/session";
 
 export default async function ListePage() {
-  const [tasks, categories] = await Promise.all([getTasks(), getCategories()]);
+  const [{ couple }, categories] = await Promise.all([
+    getCachedCouple(),
+    getCategories(),
+  ]);
+
+  const tasks = await queryCoupleTasks(couple.id);
 
   return <TaskList tasks={tasks} categories={categories} />;
 }

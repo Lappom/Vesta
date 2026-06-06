@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { TaskCard } from "@/components/tasks/TaskCard";
@@ -15,13 +16,26 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { MarkDoneDialog } from "@/components/tasks/MarkDoneDialog";
-import { TaskForm } from "@/components/tasks/TaskForm";
 import {
   completeTask,
   updateTaskStatus,
   deleteTask,
 } from "@/lib/actions/task-actions";
+
+const TaskForm = dynamic(
+  () => import("@/components/tasks/TaskForm").then((m) => m.TaskForm),
+  {
+    loading: () => (
+      <p className="text-sm text-muted-foreground">Loading form…</p>
+    ),
+  },
+);
+
+const MarkDoneDialog = dynamic(
+  () =>
+    import("@/components/tasks/MarkDoneDialog").then((m) => m.MarkDoneDialog),
+  { ssr: false },
+);
 
 type Task = {
   id: string;
@@ -72,19 +86,19 @@ export function TaskList({ tasks, categories }: TaskListProps) {
   const [actionPending, startAction] = useTransition();
 
   useEffect(() => {
-    const refresh = () => router.refresh();
+    let lastRefresh = 0;
 
-    const interval = window.setInterval(refresh, 15_000);
     const onVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        refresh();
-      }
+      if (document.visibilityState !== "visible") return;
+      const now = Date.now();
+      if (now - lastRefresh < 60_000) return;
+      lastRefresh = now;
+      router.refresh();
     };
 
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
-      window.clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, [router]);

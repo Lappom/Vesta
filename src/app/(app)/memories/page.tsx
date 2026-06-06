@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getMemoryPhotos } from "@/lib/actions/task-actions";

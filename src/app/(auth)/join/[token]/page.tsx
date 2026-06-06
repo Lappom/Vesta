@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { AuthWelcomeHero } from "@/components/illustrations/AuthWelcomeHero";
 import { JoinInvitationForm } from "@/components/couple/JoinInvitationForm";
 import { AuthLayout } from "@/components/layout/AuthLayout";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { FeatureCard } from "@/components/ui/feature-card";
 import {
   acceptInvitation,

@@ -3,9 +3,7 @@
 import { put } from "@vercel/blob";
 import { and, desc, eq, isNotNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
-import { auth } from "@/auth";
 import { db } from "@/db";
 import {
   coupleMembers,
@@ -14,12 +12,12 @@ import {
   taskPhotos,
   tasks,
 } from "@/db/schema";
-import { getUserCouple } from "@/lib/couple";
 import {
   queryCoupleNotifications,
   queryCoupleStats,
   queryCoupleTasks,
 } from "@/lib/queries/tasks";
+import { getCachedCouple } from "@/lib/session";
 
 const taskSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -34,11 +32,7 @@ const taskSchema = z.object({
 });
 
 async function getSessionCouple() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
-  const couple = await getUserCouple(session.user.id);
-  if (!couple) redirect("/onboarding");
-  return { session, couple };
+  return getCachedCouple();
 }
 
 async function saveTaskPhoto(taskId: string, photo: File) {

@@ -1,9 +1,8 @@
-import { auth } from "@/auth";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { TopNav } from "@/components/layout/TopNav";
-import { getUserCouple } from "@/lib/couple";
 import { logoutUser } from "@/lib/actions/auth-actions";
+import { getCachedCouple } from "@/lib/session";
 
 type AppShellProps = {
   children: React.ReactNode;
@@ -11,10 +10,7 @@ type AppShellProps = {
 };
 
 export async function AppShell({ children, title }: AppShellProps) {
-  const session = await auth();
-  const couple = session?.user?.id
-    ? await getUserCouple(session.user.id)
-    : null;
+  const { session, couple } = await getCachedCouple();
 
   return (
     <div className="flex min-h-dvh w-full bg-background">
