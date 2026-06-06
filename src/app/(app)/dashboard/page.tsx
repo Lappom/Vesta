@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { VestaBrand } from "@/components/brand/VestaBrand";
 import { DashboardHero } from "@/components/illustrations/DashboardHero";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -42,8 +41,7 @@ export default async function DashboardPage() {
   return (
     <div className="stagger-children space-y-8">
       <HeroBand illustration={<DashboardHero className="w-full" />}>
-        <VestaBrand size="sm" />
-        <h1 className="mt-2 text-display-md text-ink">
+        <h1 className="text-display-md text-ink">
           Welcome, {session.user.name ?? "there"}
         </h1>
         <p className="mt-3 max-w-prose text-sm text-body">
