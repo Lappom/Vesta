@@ -11,6 +11,7 @@ import { FeatureCard } from "@/components/ui/feature-card";
 import { Badge } from "@/components/ui/badge";
 import { getUserCouple } from "@/lib/couple";
 import { markNotificationsRead } from "@/lib/actions/task-actions";
+import { getTaskPhotoUrl } from "@/lib/blob";
 import {
   queryCoupleNotifications,
   queryCoupleStats,
@@ -116,7 +117,7 @@ export default async function DashboardPage() {
                 status={task.status}
                 assignee={task.assignee}
                 dueAt={task.dueAt}
-                photoUrl={task.photo?.blobUrl}
+                photoUrl={task.photo ? getTaskPhotoUrl(task.id) : null}
                 locationLabel={task.location?.label}
               />
             ))}
@@ -144,7 +145,7 @@ export default async function DashboardPage() {
                 status={task.status}
                 assignee={task.assignee}
                 dueAt={task.dueAt}
-                photoUrl={task.photo?.blobUrl}
+                photoUrl={task.photo ? getTaskPhotoUrl(task.id) : null}
                 locationLabel={task.location?.label}
               />
             ))}

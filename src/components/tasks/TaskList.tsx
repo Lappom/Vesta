@@ -11,6 +11,7 @@ import {
   FilterGroup,
 } from "@/components/ui/category-tabs";
 import { categoryStyles, colors } from "@/lib/design-tokens";
+import { getTaskPhotoUrl } from "@/lib/blob";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeaderClient } from "@/components/ui/page-header.client";
 import {
@@ -288,7 +289,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                   status={task.status}
                   assignee={task.assignee}
                   dueAt={task.dueAt}
-                  photoUrl={task.photo?.blobUrl}
+                  photoUrl={task.photo ? getTaskPhotoUrl(task.id) : null}
                   locationLabel={task.location?.label}
                   onClick={() => setEditingTask(task)}
                 />
@@ -381,7 +382,9 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                   assignee: editingTask.assignee,
                   dueAt: editingTask.dueAt,
                   location: editingTask.location,
-                  photoUrl: editingTask.photo?.blobUrl,
+                  photoUrl: editingTask.photo
+                    ? getTaskPhotoUrl(editingTask.id)
+                    : undefined,
                 }}
                 onSuccess={() => {
                   setEditingTask(null);

@@ -8,6 +8,7 @@ import {
   getCachedMemoryPhotos,
   MEMORY_PAGE_SIZE,
 } from "@/lib/queries/memories";
+import { getTaskPhotoUrl } from "@/lib/blob";
 import { getCachedCouple } from "@/lib/session";
 import { getCategoryStyle } from "@/lib/design-tokens";
 
@@ -54,9 +55,10 @@ export default async function MemoriesPage({ searchParams }: MemoriesPageProps) 
                 >
                   <div className="relative aspect-square overflow-hidden bg-surface-soft">
                     <Image
-                      src={task.photo.blobUrl}
+                      src={getTaskPhotoUrl(task.id)}
                       alt={task.title}
                       fill
+                      unoptimized
                       priority={index < 4}
                       placeholder="empty"
                       className="object-cover transition-transform duration-300 group-hover:scale-105"

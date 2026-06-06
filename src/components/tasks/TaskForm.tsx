@@ -197,6 +197,7 @@ export function TaskForm({
               src={task.photoUrl}
               alt="Current photo"
               fill
+              unoptimized
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 640px"
             />

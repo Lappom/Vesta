@@ -41,7 +41,8 @@ async function saveTaskPhoto(taskId: string, photo: File) {
   }
 
   const blob = await put(`tasks/${taskId}/${photo.name}`, photo, {
-    access: "public",
+    access: "private",
+    allowOverwrite: true,
   });
 
   const existingPhoto = await db.query.taskPhotos.findFirst({

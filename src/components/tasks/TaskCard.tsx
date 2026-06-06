@@ -94,6 +94,7 @@ export function TaskCard({
             src={photoUrl}
             alt={`Photo for ${title}`}
             fill
+            unoptimized
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 640px"
           />

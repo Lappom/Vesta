@@ -524,9 +524,9 @@ function PopupCloseButton({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label="Close popup"
-      className="focus-visible:ring-ring hover:bg-muted text-foreground absolute top-0.5 right-0.5 z-10 inline-flex size-5 cursor-pointer items-center justify-center rounded-sm transition-colors focus:outline-none focus-visible:ring-2"
+      className="absolute top-2 right-2 z-10 inline-flex size-6 cursor-pointer items-center justify-center rounded-full text-current/50 transition-colors hover:bg-white/15 hover:text-current focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
     >
-      <X className="size-3.5" />
+      <X className="size-3.5" strokeWidth={2.25} />
     </button>
   );
 }
@@ -593,7 +593,7 @@ function MarkerPopup({
   return createPortal(
     <div
       className={cn(
-        "bg-popover text-popover-foreground relative max-w-62 rounded-md border p-3 shadow-md",
+        "relative text-ink",
         "animate-in fade-in-0 zoom-in-95 duration-200 ease-out",
         className,
       )}

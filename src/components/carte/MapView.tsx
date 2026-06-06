@@ -1,6 +1,7 @@
 "use client";
 
 import MapLibreGL from "maplibre-gl";
+import { MapPin } from "lucide-react";
 import { useEffect } from "react";
 import {
   Map,
@@ -10,6 +11,7 @@ import {
   MarkerPopup,
   useMap,
 } from "@/components/ui/map";
+import { colors, getCategoryStyle } from "@/lib/design-tokens";
 import { cn } from "@/lib/utils";
 
 export type TaskMapMarker = {
@@ -19,7 +21,64 @@ export type TaskMapMarker = {
   color: string;
   title: string;
   category: string;
+  categorySlug: string;
 };
+
+function MapMarkerCard({
+  title,
+  category,
+  categorySlug,
+}: {
+  title: string;
+  category: string;
+  categorySlug: string;
+}) {
+  const style = getCategoryStyle(categorySlug);
+  const isDarkText = style.text === colors.onDark;
+
+  return (
+    <div
+      className="relative min-w-[11.5rem] max-w-[15.5rem] overflow-hidden rounded-xl shadow-[0_10px_28px_-6px_rgba(10,10,10,0.18)]"
+      style={{ backgroundColor: style.bg, color: style.text }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+        }}
+        aria-hidden
+      />
+
+      <div className="relative flex gap-2.5 p-3.5 pr-9">
+        <span
+          className={cn(
+            "mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg",
+            isDarkText ? "bg-white/15" : "bg-ink/8",
+          )}
+          aria-hidden
+        >
+          <MapPin className="size-3.5" strokeWidth={2.25} />
+        </span>
+
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-75">
+            {category}
+          </p>
+          <h3 className="mt-0.5 font-display text-[15px] leading-snug tracking-[-0.02em]">
+            {title}
+          </h3>
+        </div>
+      </div>
+
+      <div
+        className="absolute -bottom-1.5 left-1/2 size-3 -translate-x-1/2 rotate-45"
+        style={{ backgroundColor: style.bg }}
+        aria-hidden
+      />
+    </div>
+  );
+}
 
 type MapViewProps = {
   markers: TaskMapMarker[];
@@ -86,18 +145,12 @@ export function MapView({ markers, className }: MapViewProps) {
                 />
               </div>
             </MarkerContent>
-            <MarkerPopup closeButton>
-              <div className="rounded-lg bg-background p-3 ring-1 ring-hairline">
-                <p className="text-sm leading-tight font-semibold">
-                  {marker.title}
-                </p>
-                <p
-                  className="mt-1 text-xs font-medium"
-                  style={{ color: marker.color }}
-                >
-                  {marker.category}
-                </p>
-              </div>
+            <MarkerPopup closeButton offset={[0, -4]}>
+              <MapMarkerCard
+                title={marker.title}
+                category={marker.category}
+                categorySlug={marker.categorySlug}
+              />
             </MarkerPopup>
           </MapMarker>
         ))}

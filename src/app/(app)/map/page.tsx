@@ -16,6 +16,7 @@ export default async function MapPage() {
     color: getCategoryStyle(task.category.slug).bg,
     title: task.title,
     category: task.category.name,
+    categorySlug: task.category.slug,
   }));
 
   const placeLabel =
