@@ -16,7 +16,7 @@ const LocationPicker = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-[220px] items-center justify-center rounded-xl ring-1 ring-hairline">
+      <div className="flex h-[min(180px,28dvh)] items-center justify-center rounded-xl ring-1 ring-hairline sm:h-[220px]">
         <p className="text-sm text-muted-foreground">Loading map…</p>
       </div>
     ),
@@ -139,7 +139,7 @@ export function TaskForm({
         </select>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="assignee">For</Label>
           <select

@@ -147,14 +147,15 @@ export function TaskList({ tasks, categories }: TaskListProps) {
           </SheetTrigger>
           <SheetContent
             side="bottom"
-            className="max-h-[90dvh] overflow-y-auto sm:max-w-lg sm:mx-auto"
+            responsive
+            className="gap-0 overflow-hidden p-0"
           >
-            <SheetHeader>
-              <SheetTitle className="font-display text-display-sm">
+            <SheetHeader className="shrink-0 border-b border-hairline/60 px-4 pb-4 pt-1 lg:pt-4">
+              <SheetTitle className="pr-8 font-display text-display-sm">
                 New entry
               </SheetTitle>
             </SheetHeader>
-            <div className="px-4 pb-6">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
               <TaskForm
                 categories={categories}
                 sheetOpen={addOpen}
@@ -255,7 +256,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                   {task.status !== "done" ? (
                     <Button
                       type="button"
-                      variant="on-color"
+                      variant="success"
                       size="sm"
                       disabled={actionPending}
                       onClick={() => {
@@ -269,7 +270,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                   {task.status === "todo" ? (
                     <Button
                       type="button"
-                      variant="outline"
+                      variant="progress"
                       size="sm"
                       disabled={actionPending}
                       onClick={() =>
@@ -283,7 +284,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                   ) : null}
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="destructive"
                     size="sm"
                     disabled={actionPending}
                     onClick={() => runAction(() => deleteTask(task.id))}
@@ -318,14 +319,15 @@ export function TaskList({ tasks, categories }: TaskListProps) {
       >
         <SheetContent
           side="bottom"
-          className="max-h-[90dvh] overflow-y-auto sm:max-w-lg sm:mx-auto"
+          responsive
+          className="gap-0 overflow-hidden p-0"
         >
-          <SheetHeader>
-            <SheetTitle className="font-display text-display-sm">
+          <SheetHeader className="shrink-0 border-b border-hairline/60 px-4 pb-4 pt-1 lg:pt-4">
+            <SheetTitle className="pr-8 font-display text-display-sm">
               Edit entry
             </SheetTitle>
           </SheetHeader>
-          <div className="px-4 pb-6">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
             {editingTask ? (
               <TaskForm
                 key={editingTask.id}

@@ -10,16 +10,22 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-[#1f1f1f]",
         outline:
-          "border-border bg-background text-ink hover:bg-muted hover:text-foreground",
+          "border-hairline bg-background text-ink hover:bg-surface-soft",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-surface-strong",
+          "border-hairline bg-surface-card text-ink hover:bg-surface-strong",
         ghost:
-          "hover:bg-muted hover:text-foreground",
+          "text-muted-foreground hover:bg-surface-soft hover:text-ink",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:ring-destructive/20",
+          "bg-brand-coral text-white hover:bg-brand-coral/90 focus-visible:ring-brand-coral/30",
         link: "text-ink underline-offset-4 hover:underline",
         "on-color":
-          "bg-background text-ink hover:bg-background/90",
+          "border-hairline bg-background text-ink shadow-sm hover:bg-surface-soft",
+        accent:
+          "bg-brand-lavender text-ink hover:bg-brand-lavender/90",
+        success:
+          "bg-brand-mint text-ink hover:bg-brand-mint/90",
+        progress:
+          "bg-brand-ochre text-ink hover:bg-brand-ochre/90",
       },
       size: {
         default: "h-11 gap-1.5 px-5",

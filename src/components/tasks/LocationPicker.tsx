@@ -265,7 +265,7 @@ export function LocationPicker({
       ) : null}
 
       <div className="overflow-hidden rounded-xl ring-1 ring-hairline">
-        <div className="h-[220px] w-full">
+        <div className="h-[min(180px,28dvh)] w-full sm:h-[220px]">
           <Map
             center={point ? [point.lng, point.lat] : DEFAULT_CENTER}
             zoom={point ? 14 : 5}

@@ -54,7 +54,7 @@ export default async function DashboardPage() {
           </Link>
           <Link
             href="/list"
-            className={cn(buttonVariants({ variant: "outline" }))}
+            className={cn(buttonVariants({ variant: "accent" }))}
           >
             Add an idea
           </Link>

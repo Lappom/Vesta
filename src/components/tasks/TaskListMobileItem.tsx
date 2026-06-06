@@ -44,7 +44,7 @@ export function TaskListMobileItem({
         {task.status !== "done" ? (
           <Button
             type="button"
-            variant="on-color"
+            variant="success"
             size="sm"
             disabled={actionPending}
             onClick={onMarkDone}
@@ -55,10 +55,9 @@ export function TaskListMobileItem({
         {task.status === "todo" ? (
           <Button
             type="button"
-            variant="outline"
+            variant="progress"
             size="sm"
             disabled={actionPending}
-            className="border-white/30 bg-white/10 text-inherit hover:bg-white/20"
             onClick={onMarkInProgress}
           >
             In progress
@@ -66,10 +65,9 @@ export function TaskListMobileItem({
         ) : null}
         <Button
           type="button"
-          variant="ghost"
+          variant="destructive"
           size="sm"
           disabled={actionPending}
-          className="text-inherit hover:bg-white/15"
           onClick={onDelete}
         >
           Delete

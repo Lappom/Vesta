@@ -45,7 +45,7 @@ export default async function SettingsPage() {
         </p>
         {isOwner ? (
           <form action={regenerateInviteCode} className="mt-4">
-            <Button type="submit" variant="outline">
+            <Button type="submit" variant="accent">
               Regenerate code
             </Button>
           </form>
