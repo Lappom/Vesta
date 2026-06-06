@@ -1,18 +1,37 @@
 "use client";
 
-import { DashboardHero } from "@/components/illustrations/DashboardHero";
-import { ListHero } from "@/components/illustrations/ListHero";
-import { MapHero } from "@/components/illustrations/MapHero";
-import { MemoriesHero } from "@/components/illustrations/MemoriesHero";
-import { StatsHero } from "@/components/illustrations/StatsHero";
+import dynamic from "next/dynamic";
+import type { ComponentType } from "react";
+
+type HeroProps = { className?: string };
 
 const illustrations = {
-  dashboard: DashboardHero,
-  list: ListHero,
-  map: MapHero,
-  memories: MemoriesHero,
-  stats: StatsHero,
-} as const;
+  dashboard: dynamic(() =>
+    import("@/components/illustrations/DashboardHero").then((m) => ({
+      default: m.DashboardHero,
+    })),
+  ),
+  list: dynamic(() =>
+    import("@/components/illustrations/ListHero").then((m) => ({
+      default: m.ListHero,
+    })),
+  ),
+  map: dynamic(() =>
+    import("@/components/illustrations/MapHero").then((m) => ({
+      default: m.MapHero,
+    })),
+  ),
+  memories: dynamic(() =>
+    import("@/components/illustrations/MemoriesHero").then((m) => ({
+      default: m.MemoriesHero,
+    })),
+  ),
+  stats: dynamic(() =>
+    import("@/components/illustrations/StatsHero").then((m) => ({
+      default: m.StatsHero,
+    })),
+  ),
+} satisfies Record<string, ComponentType<HeroProps>>;
 
 export type IllustrationId = keyof typeof illustrations;
 

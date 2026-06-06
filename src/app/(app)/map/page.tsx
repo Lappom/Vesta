@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { getTasksWithLocation } from "@/lib/actions/task-actions";
 import { categoryStyles, getCategoryStyle } from "@/lib/design-tokens";
 
-export const dynamic = "force-dynamic";
 
 export default async function MapPage() {
   const tasks = await getTasksWithLocation();

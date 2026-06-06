@@ -5,7 +5,6 @@ import { FeatureCard } from "@/components/ui/feature-card";
 import { categoryStyles } from "@/lib/design-tokens";
 import { getCoupleStats } from "@/lib/actions/task-actions";
 
-export const dynamic = "force-dynamic";
 
 export default async function StatsPage() {
   const stats = await getCoupleStats();

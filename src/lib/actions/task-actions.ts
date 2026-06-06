@@ -1,8 +1,8 @@
 "use server";
 
 import { put } from "@vercel/blob";
-import { and, desc, eq, isNotNull } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { and, eq } from "drizzle-orm";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
 import {
@@ -61,6 +61,11 @@ async function saveTaskPhoto(taskId: string, photo: File) {
   }
 
   return { success: true } as const;
+}
+
+function revalidateMemories(coupleId: string) {
+  revalidateTag(`memories-${coupleId}`, "max");
+  revalidatePath("/memories");
 }
 
 async function notifyPartner(
@@ -147,7 +152,7 @@ export async function createTask(formData: FormData) {
   revalidatePath("/list");
   revalidatePath("/dashboard");
   revalidatePath("/map");
-  revalidatePath("/memories");
+  revalidateMemories(couple.id);
   revalidatePath("/stats");
   return { success: true };
 }
@@ -238,7 +243,7 @@ export async function updateTask(formData: FormData) {
   revalidatePath("/list");
   revalidatePath("/dashboard");
   revalidatePath("/map");
-  revalidatePath("/memories");
+  revalidateMemories(couple.id);
   revalidatePath("/stats");
   return { success: true };
 }
@@ -285,7 +290,7 @@ export async function completeTask(formData: FormData) {
   revalidatePath("/list");
   revalidatePath("/dashboard");
   revalidatePath("/map");
-  revalidatePath("/memories");
+  revalidateMemories(couple.id);
   revalidatePath("/stats");
   return { success: true };
 }
@@ -318,7 +323,7 @@ export async function updateTaskStatus(taskId: string, status: "todo" | "in_prog
 
   revalidatePath("/list");
   revalidatePath("/dashboard");
-  revalidatePath("/memories");
+  revalidateMemories(couple.id);
   revalidatePath("/stats");
 }
 
@@ -347,21 +352,6 @@ export async function getTasksWithLocation() {
       location: true,
     },
   });
-}
-
-export async function getMemoryPhotos() {
-  const { couple } = await getSessionCouple();
-
-  const doneTasks = await db.query.tasks.findMany({
-    where: and(eq(tasks.coupleId, couple.id), eq(tasks.status, "done")),
-    with: {
-      category: true,
-      photo: true,
-    },
-    orderBy: [desc(tasks.completedAt)],
-  });
-
-  return doneTasks.filter((t) => t.photo);
 }
 
 export async function getCoupleStats() {

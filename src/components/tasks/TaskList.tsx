@@ -6,9 +6,13 @@ import { useRouter } from "next/navigation";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { TaskListMobileItem } from "@/components/tasks/TaskListMobileItem";
 import { Button } from "@/components/ui/button";
-import { CategoryTabs } from "@/components/ui/category-tabs";
+import {
+  CategoryTabs,
+  FilterGroup,
+} from "@/components/ui/category-tabs";
+import { categoryStyles, colors } from "@/lib/design-tokens";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageHeader } from "@/components/ui/page-header";
+import { PageHeaderClient } from "@/components/ui/page-header.client";
 import {
   Sheet,
   SheetContent,
@@ -62,17 +66,33 @@ type TaskListProps = {
 
 const filters = [
   { id: "all", label: "All" },
-  { id: "sortie", label: "Outings" },
-  { id: "date", label: "Dates" },
-  { id: "pratique", label: "Practical" },
-  { id: "intimite", label: "Intimacy" },
+  {
+    id: "sortie",
+    label: "Outings",
+    accent: categoryStyles.sortie.bg,
+  },
+  {
+    id: "date",
+    label: "Dates",
+    accent: categoryStyles.date.bg,
+  },
+  {
+    id: "pratique",
+    label: "Practical",
+    accent: categoryStyles.pratique.bg,
+  },
+  {
+    id: "intimite",
+    label: "Intimacy",
+    accent: categoryStyles.intimite.bg,
+  },
 ];
 
 const statusFilters = [
   { id: "all", label: "All statuses" },
-  { id: "todo", label: "To do" },
-  { id: "in_progress", label: "In progress" },
-  { id: "done", label: "Done" },
+  { id: "todo", label: "To do", accent: colors.mutedSoft },
+  { id: "in_progress", label: "In progress", accent: colors.brandOchre },
+  { id: "done", label: "Done", accent: colors.success },
 ];
 
 export function TaskList({ tasks, categories }: TaskListProps) {
@@ -143,9 +163,9 @@ export function TaskList({ tasks, categories }: TaskListProps) {
   }, [tasks, categoryFilter, statusFilter]);
 
   return (
-    <div className="stagger-children space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <PageHeader
+    <div className="stagger-children min-w-0 space-y-6">
+      <div className="flex min-w-0 items-start justify-between gap-4">
+        <PageHeaderClient
           caption="List"
           title="Our list"
           description="Outings, dates, and moments to share together."
@@ -182,19 +202,26 @@ export function TaskList({ tasks, categories }: TaskListProps) {
         </Sheet>
       </div>
 
-      <CategoryTabs
-        items={filters}
-        value={categoryFilter}
-        onChange={setCategoryFilter}
-        aria-label="Filter by category"
-      />
-
-      <CategoryTabs
-        items={statusFilters}
-        value={statusFilter}
-        onChange={setStatusFilter}
-        aria-label="Filter by status"
-      />
+      <FilterGroup>
+        <CategoryTabs
+          label="Category"
+          items={filters}
+          value={categoryFilter}
+          onChange={setCategoryFilter}
+          aria-label="Filter by category"
+        />
+        <div
+          aria-hidden
+          className="h-px bg-hairline/50"
+        />
+        <CategoryTabs
+          label="Status"
+          items={statusFilters}
+          value={statusFilter}
+          onChange={setStatusFilter}
+          aria-label="Filter by status"
+        />
+      </FilterGroup>
 
       {filtered.length === 0 ? (
         <EmptyState

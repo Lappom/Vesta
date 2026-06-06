@@ -8,7 +8,6 @@ import { getUserCouple } from "@/lib/couple";
 import { regenerateInviteCode } from "@/lib/actions/couple-actions";
 import { getCoupleInvitations } from "@/lib/actions/invitation-actions";
 
-export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
   const session = await auth();

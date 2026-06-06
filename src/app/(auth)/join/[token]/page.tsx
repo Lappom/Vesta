@@ -13,7 +13,6 @@ import {
 import { getUserCouple } from "@/lib/couple";
 import { cn } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ token: string }>;

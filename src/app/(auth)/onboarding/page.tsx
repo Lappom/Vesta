@@ -6,7 +6,6 @@ import { OnboardingForm } from "@/components/couple/OnboardingForm";
 import { AuthLayout } from "@/components/layout/AuthLayout";
 import { getUserCouple } from "@/lib/couple";
 
-export const dynamic = "force-dynamic";
 
 export default async function OnboardingPage() {
   const session = await auth();

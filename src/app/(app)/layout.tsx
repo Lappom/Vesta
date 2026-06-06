@@ -1,12 +1,22 @@
+import { Suspense } from "react";
 import { AppShell } from "@/components/layout/AppShell";
-import { getCachedCouple } from "@/lib/session";
 
-export default async function AppLayout({
+function AppShellFallback() {
+  return (
+    <div className="flex min-h-dvh w-full items-center justify-center bg-background">
+      <p className="text-sm text-muted-foreground">Loading…</p>
+    </div>
+  );
+}
+
+export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await getCachedCouple();
-
-  return <AppShell>{children}</AppShell>;
+  return (
+    <Suspense fallback={<AppShellFallback />}>
+      <AppShell>{children}</AppShell>
+    </Suspense>
+  );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   PageHeaderIllustration,
 } from "@/components/ui/page-header-illustration";
@@ -12,7 +14,7 @@ type PageHeaderProps = {
   className?: string;
 };
 
-export function PageHeader({
+export function PageHeaderClient({
   caption,
   title,
   description,
