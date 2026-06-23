@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { TaskCard } from "@/components/tasks/TaskCard";
 import { TaskListMobileItem } from "@/components/tasks/TaskListMobileItem";
 import { Button } from "@/components/ui/button";
@@ -15,23 +15,38 @@ import { getTaskPhotoUrl } from "@/lib/blob";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeaderClient } from "@/components/ui/page-header.client";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   completeTask,
   updateTaskStatus,
   deleteTask,
 } from "@/lib/actions/task-actions";
+import { toast } from "@/lib/toast";
 
 const TaskForm = dynamic(
   () => import("@/components/tasks/TaskForm").then((m) => m.TaskForm),
   {
     loading: () => (
-      <p className="text-sm text-muted-foreground">Loading form…</p>
+      <div className="space-y-4">
+        <Skeleton className="h-11 w-full" />
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-11 w-full" />
+        <Skeleton className="h-11 w-full" />
+      </div>
     ),
   },
 );
@@ -98,13 +113,41 @@ const statusFilters = [
 
 export function TaskList({ tasks, categories }: TaskListProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [addOpen, setAddOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [markDoneTask, setMarkDoneTask] = useState<Task | null>(null);
   const [markDoneError, setMarkDoneError] = useState<string | null>(null);
+  const [deleteTaskTarget, setDeleteTaskTarget] = useState<Task | null>(null);
   const [actionPending, startAction] = useTransition();
+
+  useEffect(() => {
+    if (searchParams.get("add") === "1") {
+      setAddOpen(true);
+      router.replace("/list", { scroll: false });
+    }
+  }, [searchParams, router]);
+
+  useEffect(() => {
+    const highlightId = searchParams.get("highlight");
+    if (!highlightId) return;
+
+    const timer = window.setTimeout(() => {
+      const el = document.getElementById(`task-${highlightId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("ring-2", "ring-ink", "ring-offset-2");
+        window.setTimeout(() => {
+          el.classList.remove("ring-2", "ring-ink", "ring-offset-2");
+        }, 2500);
+      }
+      router.replace("/list", { scroll: false });
+    }, 100);
+
+    return () => window.clearTimeout(timer);
+  }, [searchParams, router]);
 
   useEffect(() => {
     let lastRefresh = 0;
@@ -124,10 +167,22 @@ export function TaskList({ tasks, categories }: TaskListProps) {
     };
   }, [router]);
 
-  const runAction = (action: () => Promise<void>) => {
+  const runAction = (action: () => Promise<void>, successMessage?: string) => {
     startAction(async () => {
       await action();
       router.refresh();
+      if (successMessage) {
+        toast.success(successMessage);
+      }
+    });
+  };
+
+  const handleDelete = (task: Task) => {
+    startAction(async () => {
+      await deleteTask(task.id);
+      setDeleteTaskTarget(null);
+      router.refresh();
+      toast.success("Entry deleted");
     });
   };
 
@@ -148,6 +203,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
 
       setMarkDoneTask(null);
       router.refresh();
+      toast.success("Entry marked as done");
     });
   };
 
@@ -162,6 +218,8 @@ export function TaskList({ tasks, categories }: TaskListProps) {
       return true;
     });
   }, [tasks, categoryFilter, statusFilter]);
+
+  const isFilteredEmpty = filtered.length === 0 && tasks.length > 0;
 
   return (
     <div className="stagger-children min-w-0 space-y-6">
@@ -196,6 +254,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                 onSuccess={() => {
                   setAddOpen(false);
                   router.refresh();
+                  toast.success("Entry added to your list");
                 }}
               />
             </div>
@@ -226,11 +285,28 @@ export function TaskList({ tasks, categories }: TaskListProps) {
 
       {filtered.length === 0 ? (
         <EmptyState
-          illustration="list"
-          title="Empty list"
-          description="Add your first idea for two."
+          illustration={isFilteredEmpty ? undefined : "list"}
+          variant={isFilteredEmpty ? "filtered" : "default"}
+          title={isFilteredEmpty ? "No matching entries" : "Empty list"}
+          description={
+            isFilteredEmpty
+              ? "Try adjusting your filters to see more entries."
+              : "Add your first idea for two."
+          }
           action={
-            <Button onClick={() => setAddOpen(true)}>Add an entry</Button>
+            isFilteredEmpty ? (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCategoryFilter("all");
+                  setStatusFilter("all");
+                }}
+              >
+                Clear filters
+              </Button>
+            ) : (
+              <Button onClick={() => setAddOpen(true)}>Add an entry</Button>
+            )
           }
         />
       ) : (
@@ -259,8 +335,8 @@ export function TaskList({ tasks, categories }: TaskListProps) {
               </div>
               <div role="rowgroup" className="divide-y divide-hairline/30">
                 {filtered.map((task) => (
-                  <TaskListMobileItem
-                    key={task.id}
+                  <div key={task.id} id={`task-${task.id}`} className="scroll-mt-24">
+                    <TaskListMobileItem
                     task={task}
                     actionPending={actionPending}
                     onEdit={() => setEditingTask(task)}
@@ -269,10 +345,14 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                       setMarkDoneTask(task);
                     }}
                     onMarkInProgress={() =>
-                      runAction(() => updateTaskStatus(task.id, "in_progress"))
+                      runAction(
+                        () => updateTaskStatus(task.id, "in_progress"),
+                        "Status updated",
+                      )
                     }
-                    onDelete={() => runAction(() => deleteTask(task.id))}
+                    onDelete={() => setDeleteTaskTarget(task)}
                   />
+                  </div>
                 ))}
               </div>
             </div>
@@ -280,7 +360,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
 
           <div className="hidden space-y-4 lg:block">
             {filtered.map((task) => (
-              <div key={task.id} className="space-y-2">
+              <div key={task.id} id={`task-${task.id}`} className="scroll-mt-24 space-y-2">
                 <TaskCard
                   title={task.title}
                   description={task.description}
@@ -315,8 +395,9 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                       size="sm"
                       disabled={actionPending}
                       onClick={() =>
-                        runAction(() =>
-                          updateTaskStatus(task.id, "in_progress"),
+                        runAction(
+                          () => updateTaskStatus(task.id, "in_progress"),
+                          "Status updated",
                         )
                       }
                     >
@@ -328,7 +409,7 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                     variant="destructive"
                     size="sm"
                     disabled={actionPending}
-                    onClick={() => runAction(() => deleteTask(task.id))}
+                    onClick={() => setDeleteTaskTarget(task)}
                   >
                     Delete
                   </Button>
@@ -389,12 +470,46 @@ export function TaskList({ tasks, categories }: TaskListProps) {
                 onSuccess={() => {
                   setEditingTask(null);
                   router.refresh();
+                  toast.success("Entry updated");
                 }}
               />
             ) : null}
           </div>
         </SheetContent>
       </Sheet>
+
+      <Dialog
+        open={deleteTaskTarget !== null}
+        onOpenChange={(open) => !open && setDeleteTaskTarget(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete entry?</DialogTitle>
+            <DialogDescription>
+              &ldquo;{deleteTaskTarget?.title}&rdquo; will be permanently
+              removed. This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={actionPending}
+              onClick={() => setDeleteTaskTarget(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={actionPending}
+              onClick={() => deleteTaskTarget && handleDelete(deleteTaskTarget)}
+            >
+              {actionPending ? "Deleting…" : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

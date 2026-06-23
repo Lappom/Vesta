@@ -50,13 +50,14 @@ export function TaskCard({
     <article
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
+      aria-label={onClick ? `Open entry: ${title}` : undefined}
       onClick={onClick}
       onKeyDown={(e) => {
         if (onClick && (e.key === "Enter" || e.key === " ")) onClick();
       }}
       className={cn(
         "rounded-xl p-5 transition-transform lg:p-6",
-        onClick && "cursor-pointer hover:scale-[1.01] active:scale-[0.99]",
+        onClick && "cursor-pointer can-hover:hover:scale-[1.01] active:scale-[0.97]",
       )}
       style={{ backgroundColor: style.bg, color: style.text }}
     >

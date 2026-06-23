@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { AlertTriangle } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { EmptyState } from "@/components/ui/empty-state";
+import { cn } from "@/lib/utils";
 
 type AppErrorProps = {
   error: Error & { digest?: string };
@@ -15,22 +18,25 @@ export default function AppError({ error, reset }: AppErrorProps) {
   }, [error]);
 
   return (
-    <main className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-6 py-12 text-center">
-      <div className="flex size-14 items-center justify-center rounded-2xl bg-surface-card">
-        <AlertTriangle className="size-7 text-muted-foreground" aria-hidden />
-      </div>
-      <div className="max-w-sm space-y-2">
-        <h1 className="font-display text-2xl text-ink">This page couldn&apos;t load</h1>
-        <p className="text-sm text-body">
-          A server error occurred. Reload to try again.
-        </p>
-        {error.digest ? (
-          <p className="text-xs text-muted-foreground">ERROR {error.digest}</p>
-        ) : null}
-      </div>
-      <Button type="button" onClick={() => reset()}>
-        Reload
-      </Button>
+    <main className="flex min-h-[60vh] flex-col items-center justify-center px-6 py-12">
+      <EmptyState
+        title="This page couldn't load"
+        description={
+          error.digest
+            ? `A server error occurred (ERROR ${error.digest}). Reload to try again.`
+            : "A server error occurred. Reload to try again."
+        }
+        action={
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button type="button" onClick={() => reset()}>
+              Reload
+            </Button>
+            <Link href="/dashboard" className={cn(buttonVariants({ variant: "outline" }))}>
+              Go home
+            </Link>
+          </div>
+        }
+      />
     </main>
   );
 }

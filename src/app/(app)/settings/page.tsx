@@ -1,11 +1,10 @@
 import { auth } from "@/auth";
-import { logoutUser } from "@/lib/actions/auth-actions";
 import { InvitationManager } from "@/components/couple/InvitationManager";
-import { Button } from "@/components/ui/button";
+import { LogoutButton } from "@/components/settings/LogoutButton";
+import { RegenerateCodeButton } from "@/components/settings/RegenerateCodeButton";
 import { FeatureCard } from "@/components/ui/feature-card";
 import { PageHeader } from "@/components/ui/page-header";
 import { getUserCouple } from "@/lib/couple";
-import { regenerateInviteCode } from "@/lib/actions/couple-actions";
 import { getCoupleInvitations } from "@/lib/actions/invitation-actions";
 
 
@@ -27,7 +26,7 @@ export default async function SettingsPage() {
       />
 
       <FeatureCard variant="cream">
-        <h2 className="text-lg font-semibold">Account</h2>
+        <h2 className="font-display text-display-sm text-ink">Account</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {session!.user!.email}
         </p>
@@ -35,7 +34,7 @@ export default async function SettingsPage() {
       </FeatureCard>
 
       <FeatureCard variant="cream" className="bg-surface-soft">
-        <h2 className="text-lg font-semibold">Invite code</h2>
+        <h2 className="font-display text-display-sm text-ink">Invite code</h2>
         <p className="mt-3 font-display text-display-lg tracking-[0.2em]">
           {couple!.inviteCode}
         </p>
@@ -43,16 +42,14 @@ export default async function SettingsPage() {
           Share this 6-digit code with your partner.
         </p>
         {isOwner ? (
-          <form action={regenerateInviteCode} className="mt-4">
-            <Button type="submit" variant="accent">
-              Regenerate code
-            </Button>
-          </form>
+          <div className="mt-4">
+            <RegenerateCodeButton />
+          </div>
         ) : null}
       </FeatureCard>
 
       <FeatureCard variant="cream">
-        <h2 className="text-lg font-semibold">Invitation links</h2>
+        <h2 className="font-display text-display-sm text-ink">Invitation links</h2>
         <div className="mt-4">
           <InvitationManager
             invitations={invitations}
@@ -62,7 +59,7 @@ export default async function SettingsPage() {
       </FeatureCard>
 
       <FeatureCard variant="cream">
-        <h2 className="text-lg font-semibold">Couple space</h2>
+        <h2 className="font-display text-display-sm text-ink">Couple space</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           {couple!.members.length}/2 members ·{" "}
           {couple!.members.length < 2
@@ -71,11 +68,7 @@ export default async function SettingsPage() {
         </p>
       </FeatureCard>
 
-      <form action={logoutUser}>
-        <Button type="submit" variant="destructive" className="w-full">
-          Log out
-        </Button>
-      </form>
+      <LogoutButton />
     </div>
   );
 }

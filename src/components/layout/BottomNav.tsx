@@ -8,7 +8,6 @@ import {
   Home,
   ListTodo,
   MapPin,
-  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +17,6 @@ const items = [
   { href: "/map", label: "Map", icon: MapPin },
   { href: "/memories", label: "Memories", icon: Heart },
   { href: "/stats", label: "Stats", icon: BarChart3 },
-  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function BottomNav() {
@@ -27,9 +25,9 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed bottom-0 left-0 right-0 z-30 border-t border-hairline bg-background px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-30 border-t border-hairline bg-background px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 lg:hidden"
     >
-      <ul className="mx-auto grid max-w-lg grid-cols-6 gap-0.5">
+      <ul className="mx-auto grid max-w-lg grid-cols-5 gap-1">
         {items.map((item) => {
           const active = pathname.startsWith(item.href);
           const Icon = item.icon;
@@ -38,10 +36,10 @@ export function BottomNav() {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-full px-0.5 py-1 text-[10px] font-medium transition-colors",
+                  "flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-full px-1 py-1 text-[11px] font-medium transition-[transform,background-color,color] duration-150 ease-out active:scale-[0.97]",
                   active
                     ? "bg-surface-card text-ink"
-                    : "text-muted-foreground hover:text-ink"
+                    : "text-muted-foreground can-hover:hover:text-ink"
                 )}
               >
                 <Icon className="size-4" aria-hidden />

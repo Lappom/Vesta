@@ -1,11 +1,6 @@
-import { Suspense } from "react";
-import { TaskList } from "@/components/tasks/TaskList";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getCategories } from "@/lib/actions/task-actions";
-import { queryCoupleTasks } from "@/lib/queries/tasks";
-import { getCachedCouple } from "@/lib/session";
 
-function TaskListFallback() {
+export default function ListLoading() {
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -20,22 +15,8 @@ function TaskListFallback() {
       <div className="space-y-4">
         <Skeleton className="h-32 w-full rounded-xl" />
         <Skeleton className="h-32 w-full rounded-xl" />
+        <Skeleton className="h-32 w-full rounded-xl" />
       </div>
     </div>
-  );
-}
-
-export default async function ListePage() {
-  const [{ couple }, categories] = await Promise.all([
-    getCachedCouple(),
-    getCategories(),
-  ]);
-
-  const tasks = await queryCoupleTasks(couple.id);
-
-  return (
-    <Suspense fallback={<TaskListFallback />}>
-      <TaskList tasks={tasks} categories={categories} />
-    </Suspense>
   );
 }

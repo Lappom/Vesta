@@ -48,10 +48,10 @@ export function Sidebar({ userName, onLogout }: SidebarProps) {
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors",
+                    "flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium transition-[transform,background-color,color] duration-150 ease-out active:scale-[0.97]",
                     active
                       ? "bg-surface-card text-ink"
-                      : "text-muted-foreground hover:bg-muted hover:text-ink"
+                      : "text-muted-foreground can-hover:hover:bg-muted can-hover:hover:text-ink"
                   )}
                 >
                   <Icon className="size-4 shrink-0" aria-hidden />

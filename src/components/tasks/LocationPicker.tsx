@@ -248,7 +248,7 @@ export function LocationPicker({
                   type="button"
                   role="option"
                   aria-selected={false}
-                  className="flex w-full items-start gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-accent"
+                  className="flex w-full items-start gap-2 px-3 py-2 text-left text-sm transition-[transform,background-color,color] duration-150 ease-out can-hover:hover:bg-accent active:scale-[0.97]"
                   onClick={() => handleSelectSuggestion(result)}
                 >
                   <MapPin className="mt-0.5 size-3.5 shrink-0 text-brand-pink" />
@@ -293,7 +293,7 @@ export function LocationPicker({
                     aria-hidden
                   >
                     <span
-                      className="absolute inset-0 rounded-full opacity-40 blur-sm transition-transform duration-300 group-hover:scale-125"
+                      className="absolute inset-0 rounded-full opacity-40 blur-sm transition-transform duration-200 ease-out can-hover:group-hover:scale-125"
                       style={{ backgroundColor: MARKER_COLOR }}
                     />
                     <span

@@ -10,25 +10,36 @@ import {
   FeatureCardTitle,
 } from "@/components/ui/feature-card";
 import { createCouple, joinCouple } from "@/lib/actions/couple-actions";
+import { toast } from "@/lib/toast";
 
 export function OnboardingForm() {
   const [error, setError] = useState<string | null>(null);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   return (
     <div className="space-y-6">
       <form
         action={() => {
+          setCreateError(null);
           startTransition(async () => {
-            await createCouple();
+            try {
+              await createCouple();
+            } catch {
+              setCreateError("Unable to create your couple space. Please try again.");
+              toast.error("Unable to create your couple space");
+            }
           });
         }}
       >
-        <FeatureCard variant="peach" className="cursor-pointer transition-transform hover:scale-[1.01]">
+        <FeatureCard variant="peach" className="cursor-pointer transition-transform duration-150 ease-out can-hover:hover:scale-[1.01] active:scale-[0.97]">
           <FeatureCardTitle>Create my couple space</FeatureCardTitle>
           <FeatureCardDescription>
             Generate a 6-digit code to share with your partner.
           </FeatureCardDescription>
+          {createError ? (
+            <p className="mt-3 text-sm text-destructive">{createError}</p>
+          ) : null}
           <Button type="submit" variant="on-color" className="mt-4" disabled={pending}>
             Get started
           </Button>

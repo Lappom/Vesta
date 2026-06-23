@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { format } from "date-fns";
 import { enUS } from "date-fns/locale";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import {
   createInvitationLink,

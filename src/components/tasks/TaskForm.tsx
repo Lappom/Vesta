@@ -17,7 +17,7 @@ const LocationPicker = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex h-[min(180px,28dvh)] items-center justify-center rounded-xl ring-1 ring-hairline sm:h-[220px]">
-        <p className="text-sm text-muted-foreground">Loading map…</p>
+        <div className="h-full w-full animate-pulse bg-muted" />
       </div>
     ),
   },

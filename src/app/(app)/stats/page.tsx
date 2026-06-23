@@ -1,7 +1,10 @@
-import { VestaBrand } from "@/components/brand/VestaBrand";
 import { StatCard } from "@/components/ui/stat-card";
 import { PageHeader } from "@/components/ui/page-header";
 import { FeatureCard } from "@/components/ui/feature-card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { categoryStyles } from "@/lib/design-tokens";
 import { getCoupleStats } from "@/lib/actions/task-actions";
 
@@ -16,12 +19,25 @@ export default async function StatsPage() {
   return (
     <div className="stagger-children space-y-8">
       <PageHeader
-        caption={<VestaBrand size="sm" />}
+        caption="Stats"
         title="Your stats"
         description="An overview of your shared moments."
         illustration="stats"
       />
 
+      {stats.total === 0 ? (
+        <EmptyState
+          illustration="stats"
+          title="No stats yet"
+          description="Complete your first entry together to start tracking your moments."
+          action={
+            <Link href="/list?add=1" className={cn(buttonVariants())}>
+              Add an entry
+            </Link>
+          }
+        />
+      ) : (
+        <>
       <div className="grid gap-4 sm:grid-cols-2">
         <StatCard
           variant="pink"
@@ -53,7 +69,7 @@ export default async function StatsPage() {
                 </div>
                 <div className="h-3 overflow-hidden rounded-full bg-hairline-soft">
                   <div
-                    className="h-full rounded-full transition-all"
+                    className="h-full rounded-full transition-[width] duration-200 ease-out"
                     style={{
                       width: `${width}%`,
                       backgroundColor: category.bg,
@@ -65,6 +81,8 @@ export default async function StatsPage() {
           })}
         </div>
       </FeatureCard>
+        </>
+      )}
     </div>
   );
 }

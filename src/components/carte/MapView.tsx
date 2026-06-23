@@ -2,7 +2,9 @@
 
 import MapLibreGL from "maplibre-gl";
 import { MapPin } from "lucide-react";
+import Link from "next/link";
 import { useEffect } from "react";
+import { buttonVariants } from "@/components/ui/button-variants";
 import {
   Map,
   MapControls,
@@ -25,10 +27,12 @@ export type TaskMapMarker = {
 };
 
 function MapMarkerCard({
+  taskId,
   title,
   category,
   categorySlug,
 }: {
+  taskId: string;
   title: string;
   category: string;
   categorySlug: string;
@@ -68,6 +72,15 @@ function MapMarkerCard({
           <h3 className="mt-0.5 font-display text-[15px] leading-snug tracking-[-0.02em]">
             {title}
           </h3>
+          <Link
+            href={`/list?highlight=${taskId}`}
+            className={cn(
+              buttonVariants({ variant: "on-color", size: "xs" }),
+              "mt-2.5 inline-flex",
+            )}
+          >
+            View entry
+          </Link>
         </div>
       </div>
 
@@ -136,7 +149,7 @@ export function MapView({ markers, className }: MapViewProps) {
                 aria-hidden
               >
                 <span
-                  className="absolute inset-0 rounded-full opacity-40 blur-sm transition-transform duration-300 group-hover:scale-125"
+                  className="absolute inset-0 rounded-full opacity-40 blur-sm transition-transform duration-200 ease-out can-hover:group-hover:scale-125"
                   style={{ backgroundColor: marker.color }}
                 />
                 <span
@@ -147,6 +160,7 @@ export function MapView({ markers, className }: MapViewProps) {
             </MarkerContent>
             <MarkerPopup closeButton offset={[0, -4]}>
               <MapMarkerCard
+                taskId={marker.id}
                 title={marker.title}
                 category={marker.category}
                 categorySlug={marker.categorySlug}

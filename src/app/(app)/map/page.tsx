@@ -1,6 +1,10 @@
 import { MapView } from "@/components/carte/MapView";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { getTasksWithLocation } from "@/lib/actions/task-actions";
 import { categoryStyles, getCategoryStyle } from "@/lib/design-tokens";
 
@@ -33,9 +37,22 @@ export default async function MapPage() {
         illustration="map"
       />
 
-      <div className="overflow-hidden rounded-xl border border-hairline bg-background">
-        <MapView markers={markers} />
-      </div>
+      {withLocation.length === 0 ? (
+        <EmptyState
+          illustration="map"
+          title="No places yet"
+          description="Add a location to an entry to see it on the map."
+          action={
+            <Link href="/list?add=1" className={cn(buttonVariants())}>
+              Add an entry
+            </Link>
+          }
+        />
+      ) : (
+        <div className="overflow-hidden rounded-xl border border-hairline bg-background">
+          <MapView markers={markers} />
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2">
         {Object.values(categoryStyles).map((category) => (

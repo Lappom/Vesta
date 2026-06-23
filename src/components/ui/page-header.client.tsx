@@ -38,7 +38,7 @@ export function PageHeaderClient({
             caption
           )
         ) : null}
-        <h1 className="text-display-sm text-ink">{title}</h1>
+        <h1 className="hidden text-display-sm text-ink lg:block">{title}</h1>
         {description ? (
           <p className="max-w-prose text-sm text-body">{description}</p>
         ) : null}

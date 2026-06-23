@@ -524,7 +524,7 @@ function PopupCloseButton({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       aria-label="Close popup"
-      className="absolute top-2 right-2 z-10 inline-flex size-6 cursor-pointer items-center justify-center rounded-full text-current/50 transition-colors hover:bg-white/15 hover:text-current focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+      className="absolute top-2 right-2 z-10 inline-flex size-6 cursor-pointer items-center justify-center rounded-full text-current/50 transition-[transform,background-color,color] duration-150 ease-out hover:bg-white/15 hover:text-current active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
     >
       <X className="size-3.5" strokeWidth={2.25} />
     </button>
@@ -593,7 +593,7 @@ function MarkerPopup({
   return createPortal(
     <div
       className={cn(
-        "relative text-ink",
+        "relative origin-bottom text-ink",
         "animate-in fade-in-0 zoom-in-95 duration-200 ease-out",
         className,
       )}
@@ -670,7 +670,7 @@ function MarkerTooltip({
   return createPortal(
     <div
       className={cn(
-        "bg-foreground text-background pointer-events-none rounded-md px-2 py-1 text-xs text-balance shadow-md",
+        "bg-foreground text-background pointer-events-none origin-top rounded-md px-2 py-1 text-xs text-balance shadow-md",
         "animate-in fade-in-0 zoom-in-95 duration-200 ease-out",
         className,
       )}
@@ -763,7 +763,7 @@ function ControlButton({
       aria-label={label}
       type="button"
       className={cn(
-        "flex size-8 items-center justify-center transition-all",
+        "flex size-8 items-center justify-center transition-colors duration-150 ease-out active:scale-[0.97]",
         "first:rounded-t-md last:rounded-b-md",
         "hover:bg-accent dark:hover:bg-accent/40",
         "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset",
@@ -1014,7 +1014,7 @@ function MapPopup({
   return createPortal(
     <div
       className={cn(
-        "bg-popover text-popover-foreground relative max-w-62 rounded-md border p-3 shadow-md",
+        "bg-popover text-popover-foreground relative origin-bottom max-w-62 rounded-md border p-3 shadow-md",
         "animate-in fade-in-0 zoom-in-95 duration-200 ease-out",
         className,
       )}

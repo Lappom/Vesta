@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button-variants";
 import { cn } from "@/lib/utils";
 import { HeroBand } from "@/components/ui/hero-band";
 import { StatCard } from "@/components/ui/stat-card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { FeatureCard } from "@/components/ui/feature-card";
 import { Badge } from "@/components/ui/badge";
 import { getUserCouple } from "@/lib/couple";
@@ -53,7 +54,7 @@ export default async function DashboardPage() {
             View list
           </Link>
           <Link
-            href="/list"
+            href="/list?add=1"
             className={cn(buttonVariants({ variant: "accent" }))}
           >
             Add an idea
@@ -128,11 +129,16 @@ export default async function DashboardPage() {
       <section className="space-y-4">
         <h2 className="font-display text-display-sm text-ink">Recent</h2>
         {recent.length === 0 ? (
-          <FeatureCard variant="cream">
-            <p className="text-sm text-muted-foreground">
-              Start by adding an outing, a date, or a moment to share together.
-            </p>
-          </FeatureCard>
+          <EmptyState
+            illustration="list"
+            title="Nothing here yet"
+            description="Start by adding an outing, a date, or a moment to share together."
+            action={
+              <Link href="/list?add=1" className={cn(buttonVariants())}>
+                Add an entry
+              </Link>
+            }
+          />
         ) : (
           <div className="space-y-4">
             {recent.map((task) => (
